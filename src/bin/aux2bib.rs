@@ -1,3 +1,4 @@
+#[macro_use(crate_version, crate_authors)]
 extern crate clap;
 
 use clap::{App, Arg};
@@ -5,8 +6,8 @@ use clap::{App, Arg};
 fn main() {
 
     let matches = App::new("aux2bib")
-                        .version("0.1.0")
-                        .author("Nathan Musoke")
+                        .version(crate_version!())
+                        .author(crate_authors!(",\n"))
                         .about("gets BibTeX keys from Inspire")
                         .arg(Arg::with_name("INPUT")
                              .help("Sets the input file to use")
