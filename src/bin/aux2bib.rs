@@ -3,6 +3,9 @@ extern crate clap;
 
 use clap::{App, Arg};
 
+use std::fs::File;
+use std::io::{Read, BufReader};
+
 fn main() {
 
     let matches = App::new("aux2bib")
@@ -16,4 +19,26 @@ fn main() {
                             .help("Sets the output file to use")
                             .index(2))
                         .get_matches();
+
+    // Get input from specified file or stdin
+    let mut input_data = String::new();
+
+    match matches.value_of("INPUT") {
+        Some(input_file_name) => {
+            println!("Reading from file: {}", input_file_name);
+
+            let f = File::open(input_file_name).expect("File not found");
+            let mut reader = BufReader::new(f);
+            reader.read_to_string(&mut input_data).unwrap();
+        },
+        None => {
+            println!("Reading from stdin");
+
+            let stdin = std::io::stdin();
+            let stdin = stdin.lock();
+
+            let mut reader = BufReader::new(stdin);
+            reader.read_to_string(&mut input_data).unwrap();
+        }
+    }
 }
