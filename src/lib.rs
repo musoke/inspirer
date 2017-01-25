@@ -28,7 +28,33 @@ pub fn aux2key(input_data: String) -> Vec<String> {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+
     #[test]
-    fn it_works() {
+    fn test_aux_bibtex_0_citations() {
+        let input =
+            r"\relax ".to_string();
+
+        let output: Vec<String> = Vec::new();
+        assert_eq!(aux2key(input), output);
+    }
+
+    #[test]
+    fn test_aux_bibtex_1_citation() {
+        let input =
+            r"\relax
+            \citation{Abramovici:1992ah}".to_string();
+
+        assert_eq!(aux2key(input), vec!("Abramovici:1992ah"));
+    }
+
+    #[test]
+    fn test_aux_bibtex_2_citation() {
+        let input =
+            r"\relax
+            \citation{Abramovici:1992ah}
+            \citation{Thorne:1992sdb}".to_string();
+
+        assert_eq!(aux2key(input), vec!("Abramovici:1992ah", "Thorne:1992sdb"));
     }
 }
