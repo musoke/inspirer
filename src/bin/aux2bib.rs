@@ -1,5 +1,6 @@
 #[macro_use(crate_version, crate_authors)]
 extern crate clap;
+extern crate inspirer;
 
 use clap::{App, Arg};
 
@@ -44,6 +45,7 @@ fn main() {
     }
 
     // Extract BibTeX tags from document
+    let keys = inspirer::aux2key(input_data);
 
     // Retrieve BibTeX entries from inspire.net
 
