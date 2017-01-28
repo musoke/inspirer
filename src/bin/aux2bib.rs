@@ -48,6 +48,13 @@ fn main() {
     let keys = inspirer::aux2key(input_data);
 
     // Retrieve BibTeX entries from inspire.net
+    println!("Retrieving entries...");
+    let mut bibtex_entries: Vec<String> = Vec::new();
+    for key in keys {
+        if let Some(bibtex_entry) = inspirer::fetch_bibtex_with_key(key) {
+            bibtex_entries.push(bibtex_entry);
+        }
+    }
 
     // Write BibTeX entries to file or stdout
     match matches.value_of("OUTPUT") {
