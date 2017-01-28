@@ -1,6 +1,15 @@
 extern crate regex;
 use regex::Regex;
 
+extern crate reqwest;
+use reqwest::Url;
+
+extern crate select;
+use select::document::Document;
+use select::predicate::Name;
+
+use std::io::Read;
+
 /// The `aux2key` function extracts TeX keys from LaTeX .aux files. These can be for either BibTeX
 /// or BibLaTeX.
 ///
@@ -24,6 +33,29 @@ pub fn aux2key(input_data: String) -> Vec<String> {
                             |c| c.get(1).unwrap().as_str().to_string()).collect();
 
     keys
+}
+
+/// Fetches bibtex entries from inspire.net.
+///
+/// # Examples
+///
+/// ```
+/// use inspirer::fetch_bibtex_with_key;
+///
+/// println!("{}", fetch_bibtex_with_key("Abramovici:1992ah".to_string()).expect("Error"));
+/// ```
+pub fn fetch_bibtex_with_key(key: String) -> Option<String> {
+
+    let api_url = Url::parse(&format!(r"https://inspirehep.net/search?of=hx&p={}/", key)).unwrap();
+
+    let mut response = reqwest::get(api_url).expect("Failed to send get request");
+
+    let mut html = String::new();
+    response.read_to_string(&mut html).expect("Failed to read response.");
+
+    let document = Document::from(html.as_str());
+
+    Some(document.find(Name("pre")).first().expect("No text found.").text())
 }
 
 #[cfg(test)]
