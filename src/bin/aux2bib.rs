@@ -19,8 +19,8 @@ fn main() {
                              .help("Sets the input file to use")
                              .index(1))
                         .arg(Arg::with_name("OUTPUT")
-                            .help("Sets the output file to use")
-                            .index(2))
+                             .help("Sets the file to which results should be appended")
+                             .index(2))
                         .get_matches();
 
     // Get input from specified file or stdin
@@ -63,7 +63,10 @@ fn main() {
     let writer: &mut Write = match matches.value_of("OUTPUT") {
         Some(file_name) => {
             println!("Writing to file: {}", file_name);
-            output_file = File::create(file_name).unwrap();
+            output_file = std::fs::OpenOptions::new()
+                            .append(true)
+                            .create(true)
+                            .open(file_name).unwrap();
             &mut output_file
         },
         None            => {
