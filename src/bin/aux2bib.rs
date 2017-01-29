@@ -26,24 +26,22 @@ fn main() {
     // Get input from specified file or stdin
     let mut input_data = String::new();
 
-    match matches.value_of("INPUT") {
-        Some(input_file_name) => {
-            println!("Reading from file: {}", input_file_name);
+    let mut input_file: File;
+    let mut stdin = std::io::stdin();
 
-            let f = File::open(input_file_name).expect("File not found");
-            let mut reader = BufReader::new(f);
-            reader.read_to_string(&mut input_data).unwrap();
+    let reader: &mut Read = match matches.value_of("INPUT") {
+        Some(file_name) => {
+            println!("Reading from file: {}", file_name);
+            input_file = File::open(file_name).expect("File not found");
+            &mut input_file
         },
         None => {
             println!("Reading from stdin");
-
-            let stdin = std::io::stdin();
-            let stdin = stdin.lock();
-
-            let mut reader = BufReader::new(stdin);
-            reader.read_to_string(&mut input_data).unwrap();
-        }
-    }
+            &mut stdin
+        },
+    };
+    let mut reader = BufReader::new(reader);
+    reader.read_to_string(&mut input_data).unwrap();
 
     // Extract BibTeX tags from document
     let keys = inspirer::aux2key(input_data);
