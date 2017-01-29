@@ -6,6 +6,7 @@ use clap::{App, Arg};
 
 use std::fs::File;
 use std::io::{Read, BufReader};
+use std::io::{Write, BufWriter};
 
 fn main() {
 
@@ -57,12 +58,28 @@ fn main() {
     }
 
     // Write BibTeX entries to file or stdout
-    match matches.value_of("OUTPUT") {
-        Some(output_file_name) => {
-            println!("Writing to file: {}", output_file_name);
+
+    let mut stdout = std::io::stdout();
+    let mut output_file: std::fs::File;
+
+    let writer: &mut Write = match matches.value_of("OUTPUT") {
+        Some(file_name) => {
+            println!("Writing to file: {}", file_name);
+            output_file = File::create(file_name).unwrap();
+            &mut output_file
         },
-        None => {
+        None            => {
             println!("Writing to stdout");
-        }
+            // stdout.lock();
+            &mut stdout
+        },
+    };
+
+    let mut writer = BufWriter::new(writer);
+
+    for bibtex_entry in bibtex_entries {
+        writer.write(&bibtex_entry.as_bytes()).unwrap();
     }
+
+    writer.flush().unwrap();
 }
