@@ -16,7 +16,7 @@ fn main() {
                         .author(crate_authors!(",\n"))
                         .about("gets BibTeX keys from Inspire")
                         .arg(Arg::with_name("INPUT")
-                             .help("Sets the input file to use")
+                             .help("Sets the file from which to extract BibTeX keys")
                              .index(1))
                         .arg(Arg::with_name("OUTPUT")
                              .help("Sets the file to which results should be appended")
