@@ -79,7 +79,7 @@ fn main() {
     let mut writer = BufWriter::new(writer);
 
     for bibtex_entry in bibtex_entries {
-        writer.write(&bibtex_entry.as_bytes()).unwrap();
+        writer.write_all(&bibtex_entry.as_bytes()).unwrap();
     }
 
     writer.flush().unwrap();
