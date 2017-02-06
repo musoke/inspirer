@@ -2,6 +2,11 @@
 extern crate clap;
 extern crate inspirer;
 
+#[macro_use]
+extern crate slog;
+extern crate slog_term;
+use slog::DrainExt;
+
 use clap::{App, Arg};
 
 use std::fs::File;
@@ -9,6 +14,12 @@ use std::io::{Read, BufReader};
 use std::io::{Write, BufWriter};
 
 fn main() {
+
+    // Initialize logging
+    let drain = slog_term::streamer().build().fuse();
+    let root_logger = slog::Logger::root(drain,
+                                         o!("version" => crate_version!()));
+    info!(root_logger, "Application started");
 
     // Define CLI
     let matches = App::new("aux2bib")
@@ -31,12 +42,13 @@ fn main() {
 
     let reader: &mut Read = match matches.value_of("INPUT") {
         Some(file_name) => {
-            println!("Reading from file: {}", file_name);
+            info!(root_logger, "Reading from file";
+                  "file_name" => file_name);
             input_file = File::open(file_name).expect("File not found");
             &mut input_file
         },
         None => {
-            println!("Reading from stdin");
+            info!(root_logger, "Reading from stdin");
             &mut stdin
         },
     };
@@ -45,24 +57,28 @@ fn main() {
 
     // Extract BibTeX tags from document
     let keys = inspirer::aux2key(input_data);
+    info!(root_logger, "Extracted BibTeX keys";
+          "number_of_keys" => keys.len());
 
     // Retrieve BibTeX entries from inspire.net
-    println!("Retrieving entries...");
+    info!(root_logger, "Retrieving entries");
     let mut bibtex_entries: Vec<String> = Vec::new();
     for key in keys {
+        debug!(root_logger, "Retrieving record from inspire";
+               "bibtex_key" => key);
         if let Some(bibtex_entry) = inspirer::fetch_bibtex_with_key(key) {
             bibtex_entries.push(bibtex_entry);
         }
     }
 
     // Write BibTeX entries to file or stdout
-
     let mut stdout = std::io::stdout();
     let mut output_file: std::fs::File;
 
     let writer: &mut Write = match matches.value_of("OUTPUT") {
         Some(file_name) => {
-            println!("Writing to file: {}", file_name);
+            info!(root_logger, "Writing to file";
+                  "file_name" => file_name);
             output_file = std::fs::OpenOptions::new()
                             .append(true)
                             .create(true)
@@ -70,7 +86,7 @@ fn main() {
             &mut output_file
         },
         None            => {
-            println!("Writing to stdout");
+            info!(root_logger, "Writing to stdout");
             // stdout.lock();
             &mut stdout
         },
@@ -83,4 +99,6 @@ fn main() {
     }
 
     writer.flush().unwrap();
+
+    info!(root_logger, "Done");
 }
