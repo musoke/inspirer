@@ -16,7 +16,9 @@ use std::io::{Write, BufWriter};
 fn main() {
 
     // Initialize logging
-    let drain = slog_term::streamer().build().fuse();
+    let drain = slog_term::streamer()
+                            .stderr()
+                            .build().fuse();
     let root_logger = slog::Logger::root(drain,
                                          o!("version" => crate_version!()));
     info!(root_logger, "Application started");
