@@ -29,10 +29,9 @@ pub fn aux2key(input_data: String) -> Vec<String> {
         // Below regex is for Biber. Check correctness and write tests.
         // r"\\abx@aux@cite\{([a-zA-Z]+:\d{4}[a-z]{2,3})\}"
 
-    let keys: Vec<String> = regex.captures_iter(&input_data).map(
-                            |c| c.get(1).unwrap().as_str().to_string()).collect();
-
-    keys
+    regex.captures_iter(&input_data)
+         .map(|c| c.get(1).unwrap().as_str().to_string())
+         .collect()
 }
 
 /// Fetches bibtex entries from inspire.net.
