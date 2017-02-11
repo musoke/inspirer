@@ -17,24 +17,24 @@ fn main() {
 
     // Initialize logging
     let drain = slog_term::streamer()
-                            .stderr()
-                            .build().fuse();
-    let root_logger = slog::Logger::root(drain,
-                                         o!("version" => crate_version!()));
+        .stderr()
+        .build()
+        .fuse();
+    let root_logger = slog::Logger::root(drain, o!("version" => crate_version!()));
     info!(root_logger, "Application started");
 
     // Define CLI
     let matches = App::new("aux2bib")
-                        .version(crate_version!())
-                        .author(crate_authors!(",\n"))
-                        .about("gets BibTeX keys from Inspire")
-                        .arg(Arg::with_name("INPUT")
-                             .help("Sets the file from which to extract BibTeX keys")
-                             .index(1))
-                        .arg(Arg::with_name("OUTPUT")
-                             .help("Sets the file to which results should be appended")
-                             .index(2))
-                        .get_matches();
+        .version(crate_version!())
+        .author(crate_authors!(",\n"))
+        .about("gets BibTeX keys from Inspire")
+        .arg(Arg::with_name("INPUT")
+            .help("Sets the file from which to extract BibTeX keys")
+            .index(1))
+        .arg(Arg::with_name("OUTPUT")
+            .help("Sets the file to which results should be appended")
+            .index(2))
+        .get_matches();
 
     // Get input from specified file or stdin
     let mut input_data = String::new();
@@ -48,11 +48,11 @@ fn main() {
                   "file_name" => file_name);
             input_file = File::open(file_name).expect("File not found");
             &mut input_file
-        },
+        }
         None => {
             info!(root_logger, "Reading from stdin");
             &mut stdin
-        },
+        }
     };
     let mut reader = BufReader::new(reader);
     reader.read_to_string(&mut input_data).unwrap();
@@ -82,16 +82,17 @@ fn main() {
             info!(root_logger, "Writing to file";
                   "file_name" => file_name);
             output_file = std::fs::OpenOptions::new()
-                            .append(true)
-                            .create(true)
-                            .open(file_name).unwrap();
+                .append(true)
+                .create(true)
+                .open(file_name)
+                .unwrap();
             &mut output_file
-        },
-        None            => {
+        }
+        None => {
             info!(root_logger, "Writing to stdout");
             // stdout.lock();
             &mut stdout
-        },
+        }
     };
 
     let mut writer = BufWriter::new(writer);
