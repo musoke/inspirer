@@ -23,6 +23,9 @@ fn main() {
     let root_logger = slog::Logger::root(drain, o!("version" => crate_version!()));
     info!(root_logger, "Application started");
 
+    // Initialize instance of InspirerLib
+    let lib = inspirer::Inspirer::init(Some(root_logger.new(o!())));
+
     // Define CLI
     let matches = App::new("aux2bib")
         .version(crate_version!())
@@ -58,7 +61,7 @@ fn main() {
     reader.read_to_string(&mut input_data).unwrap();
 
     // Extract BibTeX tags from document
-    let keys = inspirer::aux2key(input_data);
+    let keys = lib.aux2key(input_data);
     info!(root_logger, "Extracted BibTeX keys";
           "number_of_keys" => keys.len());
 
@@ -68,7 +71,7 @@ fn main() {
     for key in keys {
         debug!(root_logger, "Retrieving record from inspire";
                "bibtex_key" => key);
-        if let Some(bibtex_entry) = inspirer::fetch_bibtex_with_key(key) {
+        if let Some(bibtex_entry) = lib.fetch_bibtex_with_key(key) {
             bibtex_entries.push(bibtex_entry);
         }
     }
