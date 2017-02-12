@@ -74,10 +74,19 @@ impl Inspirer {
     /// ```
     pub fn fetch_bibtex_with_key(&self, key: String) -> Option<String> {
 
-        let api_url = Url::parse(&format!(r"https://inspirehep.net/search?of=hx&p={}/", key))
+        let mut api_url: Url = Url::parse("https://inspirehep.net")
+            .expect("Unable to parse API URL")
+            .join("search")
             .unwrap();
+        api_url.query_pairs_mut()
+            .append_pair("of", "hx")
+            .append_pair("p", &key);
 
+        debug!(self.logger, "Querying inspire API";
+               "URL" => api_url.to_string());
         let mut response = reqwest::get(api_url).expect("Failed to send get request");
+        debug!(self.logger, "GET request completed";
+               "HTTP response status" => response.status().to_string());
 
         let mut html = String::new();
         response.read_to_string(&mut html).expect("Failed to read response.");
