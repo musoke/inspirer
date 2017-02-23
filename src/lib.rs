@@ -43,6 +43,9 @@ impl Inspirer {
     /// or BibLaTeX.
     ///
     /// # Examples
+    ///
+    /// ## bibtex
+    ///
     /// ```
     /// let inspirer = inspirer::Inspirer::init(None);
     ///
@@ -52,14 +55,25 @@ impl Inspirer {
     ///
     /// assert_eq!(inspirer.aux2key(input), vec!("Abramovici:1992ah"));
     /// ```
+    ///
+    /// ## biber
+    ///
+    /// ```
+    /// let inspirer = inspirer::Inspirer::init(None);
+    ///
+    /// let input =
+    /// r"\relax
+    /// \abx@aux@cite{Cutler:1992tc}".to_string();
+    ///
+    /// assert_eq!(inspirer.aux2key(input), vec!("Cutler:1992tc"));
+    /// ```
     pub fn aux2key(&self, input_data: String) -> Vec<String> {
 
-        let regex = Regex::new(r"\\citation\{([a-zA-Z]+:\d{4}[a-z]{2,3})\}").unwrap();
-        // Below regex is for Biber. Check correctness and write tests.
-        // r"\\abx@aux@cite\{([a-zA-Z]+:\d{4}[a-z]{2,3})\}"
+        let regex = Regex::new(r"(\\citation|\\abx@aux@cite)\{([a-zA-Z]+:\d{4}[a-z]{2,3})\}")
+            .unwrap();
 
         regex.captures_iter(&input_data)
-            .map(|c| c.get(1).unwrap().as_str().to_string())
+            .map(|c| c.get(2).unwrap().as_str().to_string())
             .collect()
     }
 
