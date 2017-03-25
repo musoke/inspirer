@@ -77,6 +77,17 @@ impl Inspirer {
             .collect()
     }
 
+    /// # The blg2key function extracts missing references from bibtex logs
+    pub fn blg2key(&self, input_data: String) -> Vec<String> {
+
+        let regex = Regex::new(r#"(Warning--|WARN - )I didn't find a database entry for ["']([a-zA-Z]+:\d{4}[a-z]{2,3})["']"#)
+            .unwrap();
+
+        regex.captures_iter(&input_data)
+            .map(|c| c.get(2).unwrap().as_str().to_string())
+            .collect()
+    }
+
     /// Fetches BibTeX entries from inspire.net.
     ///
     /// # Examples
