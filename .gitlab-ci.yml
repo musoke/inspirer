@@ -2,6 +2,11 @@ stages:
   - build
   - test
 
+# Install build-essential for dependencies
+before_script:
+  - apt-get update -yqq
+  - apt-get install -yqq --no-install-recommends build-essential
+
 
 build-stable:
   image: scorpil/rust:stable
