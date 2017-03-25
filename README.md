@@ -1,5 +1,7 @@
 # Inspirer
 
+[![Build Status](https://travis-ci.org/musoke/inspirer.svg?branch=master)](https://travis-ci.org/musoke/inspirer)
+
 For fetching BibTeX entries from [INSPIRE](https://inspirehep.net/).
 
 This currently a rust clone of some features of
