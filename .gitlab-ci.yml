@@ -1,0 +1,21 @@
+stages:
+  - build
+  - test
+
+
+build-stable:
+  image: scorpil/rust:stable
+  stage: build
+  script:
+    - cargo build
+  artifacts:
+    paths:
+      - target
+
+test-stable:
+  image: scorpil/rust:stable
+  stage: test
+  dependencies:
+    - build-stable
+  script:
+    - cargo test
