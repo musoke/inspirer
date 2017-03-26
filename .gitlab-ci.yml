@@ -17,6 +17,7 @@ build-stable:
     - cargo build
     - cargo build --release
   artifacts:
+    name: "{$CI_PROJECT_NAME}-{$CI_COMMIT_REF_NAME}-{$CI_COMMIT_SHA}-{$CI_JOB_NAME}"
     paths:
       - target
 
@@ -35,8 +36,8 @@ build-beta:
   allow_failure: true
   script:
     - cargo build
-
   artifacts:
+    name: "{$CI_PROJECT_NAME}-{$CI_COMMIT_REF_NAME}-{$CI_COMMIT_SHA}-{$CI_JOB_NAME}"
     paths:
       - target
 
@@ -55,8 +56,8 @@ build-nightly:
   allow_failure: true
   script:
     - cargo build
-
   artifacts:
+    name: "{$CI_PROJECT_NAME}-{$CI_COMMIT_REF_NAME}-{$CI_COMMIT_SHA}-{$CI_JOB_NAME}"
     paths:
       - target
 
