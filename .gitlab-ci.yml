@@ -2,7 +2,7 @@ stages:
   - build
   - test
 
-# Install build-essential for dependencies
+# Install build-essential and other dependencies
 before_script:
   - apt-get update -yqq
   - apt-get install -yqq --no-install-recommends build-essential
@@ -15,6 +15,7 @@ build-stable:
   stage: build
   script:
     - cargo build
+    - cargo build --release
   artifacts:
     paths:
       - target
@@ -24,5 +25,46 @@ test-stable:
   stage: test
   dependencies:
     - build-stable
+  script:
+    - cargo test
+    - cargo test --release
+
+build-beta:
+  image: scorpil/rust:beta
+  stage: build
+  allow_failure: true
+  script:
+    - cargo build
+
+  artifacts:
+    paths:
+      - target
+
+test-beta:
+  image: scorpil/rust:beta
+  stage: test
+  allow_failure: true
+  dependencies:
+    - build-beta
+  script:
+    - cargo test
+
+build-nightly:
+  image: scorpil/rust:nightly
+  stage: build
+  allow_failure: true
+  script:
+    - cargo build
+
+  artifacts:
+    paths:
+      - target
+
+test-nightly:
+  image: scorpil/rust:nightly
+  stage: test
+  allow_failure: true
+  dependencies:
+    - build-nightly
   script:
     - cargo test
