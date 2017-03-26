@@ -9,6 +9,10 @@ before_script:
   - apt-get install -yqq pkg-config
   - apt-get install -yqq libssl-dev
 
+cache:
+  key: "$CI_COMMIT_REF_NAME"
+  paths:
+    - $HOME/.cargo
 
 build-stable:
   image: scorpil/rust:stable
