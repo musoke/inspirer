@@ -25,21 +25,22 @@ cargo install --git https://gitlab.com/musoke/inspirer
 To install from [crates.io](https://crates.io): to be released.
 
 I haven't really tested with Windows, but do have tests on [Appveyor](https://ci.appveyor.com/project/musoke/inspirer)
-[![AppVeyor build status](https://img.shields.io/appveyor/ci/musoke/inspirer.svg)](https://ci.appveyor.com/project/musoke/inspirer) which seem to pass sometimes.
+which seem to pass sometimes [![AppVeyor build status](https://img.shields.io/appveyor/ci/musoke/inspirer.svg)](https://ci.appveyor.com/project/musoke/inspirer).
 
 
 ## Usage
 
-To read from file `test_bibtex.aux` (usually corresponding to a LaTeX file test_bibtex.tex) and write to `stdout`:
+To read from file `test_bibtex.aux` (usually corresponding to a LaTeX file `test_bibtex.tex`) and write to `stdout`:
 ```
 aux2bib test_bibtex.aux
 ```
 To write to a file:
 ```
-aux2bib test_bibtex.aux bib.bib
+aux2bib test_bibtex.aux bibliography.bib
 ```
 
-`blg2bib` works analogously.
+`blg2bib` works analogously but takes a BibTeX or BibLaTeX log as input.
+This allows retrieval of only entries which are not currently in the database.
 
 ## Things that are stupid
 
