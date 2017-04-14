@@ -42,6 +42,14 @@ aux2bib test_bibtex.aux bibliography.bib
 `blg2bib` works analogously but takes a BibTeX or BibLaTeX log as input.
 This allows retrieval of only entries which are not currently in the database.
 
+There are some sample input files in `example_files`:
+```
+cargo run --bin aux2bib example_files/test_bitex.aux
+cargo run --bin blg2bib example_files/test_bitex.blg
+cargo run --bin blg2bib example_files/test_biber.blg
+```
+
+
 ## Things that are stupid
 
   - not yet parallelized

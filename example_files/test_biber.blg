@@ -1,0 +1,19 @@
+[0] Config.pm:354> INFO - This is Biber 2.6
+[0] Config.pm:357> INFO - Logfile is 'test_biber.blg'
+[37] biber:302> INFO - === Sat Mar 25, 2017, 14:19:12
+[52] Biber.pm:359> INFO - Reading 'test_biber.bcf'
+[141] Biber.pm:823> INFO - Found 3 citekeys in bib section 0
+[155] Biber.pm:3658> INFO - Processing section 0
+[170] Biber.pm:3828> INFO - Looking for bibtex format file 'test_biber.bib' for section 0
+[171] bibtex.pm:1425> INFO - Decoding LaTeX character macros into UTF-8
+[171] bibtex.pm:1282> INFO - Found BibTeX data source 'test_biber.bib'
+[172] Utils.pm:164> WARN - I didn't find a database entry for 'Guth:1980zm' (section 0)
+[172] Utils.pm:164> WARN - I didn't find a database entry for 'Linde:1981mu' (section 0)
+[172] Utils.pm:164> WARN - I didn't find a database entry for 'Albrecht:1982wi' (section 0)
+[180] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[180] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[180] Biber.pm:3487> INFO - Sorting list 'nty/global/' of type 'entry' with scheme 'nty' and locale 'en-US'
+[180] Biber.pm:3493> INFO - No sort tailoring available for locale 'en-US'
+[181] bbl.pm:597> INFO - Writing 'test_biber.bbl' with encoding 'ascii'
+[181] bbl.pm:701> INFO - Output to test_biber.bbl
+[181] Biber.pm:109> INFO - WARNINGS: 3
