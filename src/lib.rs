@@ -39,8 +39,8 @@ impl Inspirer {
         }
     }
 
-    /// The `aux2key` function extracts TeX keys from LaTeX .aux files. These can be for either BibTeX
-    /// or BibLaTeX.
+    /// The `aux2key` function extracts TeX keys from LaTeX .aux files. These can be for either
+    /// BibTeX or BibLaTeX.
     ///
     /// # Examples
     ///
@@ -73,7 +73,12 @@ impl Inspirer {
             .unwrap();
 
         regex.captures_iter(&input_data)
-            .map(|c| c.get(2).unwrap().as_str().to_string())
+            .map(|c| {
+                     c.get(2)
+                         .unwrap()
+                         .as_str()
+                         .to_string()
+                 })
             .collect()
     }
 
@@ -84,7 +89,12 @@ impl Inspirer {
             .unwrap();
 
         regex.captures_iter(&input_data)
-            .map(|c| c.get(2).unwrap().as_str().to_string())
+            .map(|c| {
+                     c.get(2)
+                         .unwrap()
+                         .as_str()
+                         .to_string()
+                 })
             .collect()
     }
 
@@ -95,7 +105,8 @@ impl Inspirer {
     /// ```
     /// let inspirer = inspirer::Inspirer::init(None);
     ///
-    /// println!("{}", inspirer.fetch_bibtex_with_key("Abramovici:1992ah".to_string()).expect("Error"));
+    /// println!("{}", inspirer.fetch_bibtex_with_key(
+    ///     "Abramovici:1992ah".to_string()).expect("Error"));
     /// ```
     pub fn fetch_bibtex_with_key(&self, key: String) -> Option<String> {
 
@@ -103,9 +114,7 @@ impl Inspirer {
             .expect("Unable to parse API URL")
             .join("search")
             .unwrap();
-        api_url.query_pairs_mut()
-            .append_pair("of", "hx")
-            .append_pair("p", &key);
+        api_url.query_pairs_mut().append_pair("of", "hx").append_pair("p", &key);
 
         debug!(self.logger, "Querying inspire API";
                "URL" => api_url.to_string());
@@ -118,7 +127,10 @@ impl Inspirer {
 
         let document = Document::from(html.as_str());
 
-        Some(document.find(Name("pre")).first().expect("No text found.").text())
+        Some(document.find(Name("pre"))
+                 .first()
+                 .expect("No text found.")
+                 .text())
     }
 }
 
@@ -138,7 +150,7 @@ mod tests {
     fn test_aux_bibtex_1_citation() {
         let input = r"\relax
             \citation{Abramovici:1992ah}"
-            .to_string();
+                .to_string();
 
         assert_eq!(Inspirer::init(None).aux2key(input),
                    vec!["Abramovici:1992ah"]);
@@ -149,7 +161,7 @@ mod tests {
         let input = r"\relax
             \citation{Abramovici:1992ah}
             \citation{Thorne:1992sdb}"
-            .to_string();
+                .to_string();
 
         assert_eq!(Inspirer::init(None).aux2key(input),
                    vec!["Abramovici:1992ah", "Thorne:1992sdb"]);
