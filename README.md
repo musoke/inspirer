@@ -51,4 +51,4 @@ This allows retrieval of only entries which are not currently in the database.
 
 ## Licence
 
-TBD
+Apache Licence 2.0

@@ -10,6 +10,7 @@ readme = "README.md"
 
 keywords = ["latex", "bibtex", "physics", "inspire", "inspirehep.net"]
 categories = ["command-line-utilities", "science"]
+license = "Apache-2.0"
 
 [badges]
 travis-ci = { repository = "musoke/inspirer", branch = "master" }
