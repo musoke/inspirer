@@ -2,6 +2,19 @@
 name = "inspirer"
 authors = ["Nathan Musoke <nathan.musoke@gmail.com>"]
 version = "0.1.0-alpha"
+publish = false
+description = "For working with LaTeX, inspirehep.net, and BibTeX/BibLaTeX"
+
+repository = "https://github.com/musoke/inspirer"
+readme = "README.md"
+
+keywords = ["latex", "bibtex", "physics", "inspire", "inspirehep.net"]
+categories = ["command-line-utilities", "science"]
+
+[badges]
+travis-ci = { repository = "musoke/inspirer", branch = "master" }
+appveyor  = { repository = "musoke/inspirer", branch = "master", service = "github" }
+gitlab    = { repository = "musoke/inspirer", branch = "master" }
 
 [dependencies]
 clap = "2.20.0"
