@@ -72,13 +72,9 @@ impl Inspirer {
         let regex = Regex::new(r"(\\citation|\\abx@aux@cite)\{([a-zA-Z]+:\d{4}[a-z]{2,3})\}")
             .unwrap();
 
-        regex.captures_iter(&input_data)
-            .map(|c| {
-                     c.get(2)
-                         .unwrap()
-                         .as_str()
-                         .to_string()
-                 })
+        regex
+            .captures_iter(&input_data)
+            .map(|c| c.get(2).unwrap().as_str().to_string())
             .collect()
     }
 
@@ -88,13 +84,9 @@ impl Inspirer {
         let regex = Regex::new(r#"(Warning--|WARN - )I didn't find a database entry for ["']([a-zA-Z]+:\d{4}[a-z]{2,3})["']"#)
             .unwrap();
 
-        regex.captures_iter(&input_data)
-            .map(|c| {
-                     c.get(2)
-                         .unwrap()
-                         .as_str()
-                         .to_string()
-                 })
+        regex
+            .captures_iter(&input_data)
+            .map(|c| c.get(2).unwrap().as_str().to_string())
             .collect()
     }
 
@@ -114,7 +106,10 @@ impl Inspirer {
             .expect("Unable to parse API URL")
             .join("search")
             .unwrap();
-        api_url.query_pairs_mut().append_pair("of", "hx").append_pair("p", &key);
+        api_url
+            .query_pairs_mut()
+            .append_pair("of", "hx")
+            .append_pair("p", &key);
 
         debug!(self.logger, "Querying inspire API";
                "URL" => api_url.to_string());
@@ -123,11 +118,14 @@ impl Inspirer {
                "HTTP response status" => response.status().to_string());
 
         let mut html = String::new();
-        response.read_to_string(&mut html).expect("Failed to read response.");
+        response
+            .read_to_string(&mut html)
+            .expect("Failed to read response.");
 
         let document = Document::from(html.as_str());
 
-        Some(document.find(Name("pre"))
+        Some(document
+                 .find(Name("pre"))
                  .first()
                  .expect("No text found.")
                  .text())
