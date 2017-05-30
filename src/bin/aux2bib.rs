@@ -69,6 +69,7 @@ fn main() {
     for key in keys {
         debug!(root_logger, "Retrieving record from inspire";
                "bibtex_key" => key);
+        let key = libinspire::RecID::new(&key).unwrap();
         if let Some(bibtex_entry) = lib.inspire.fetch_bibtex_with_key(key) {
             bibtex_entries.push(bibtex_entry);
         }

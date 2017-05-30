@@ -1,6 +1,7 @@
 #[macro_use(crate_version, crate_authors)]
 extern crate clap;
 extern crate inspirer;
+extern crate libinspire;
 
 #[macro_use]
 extern crate slog;
@@ -68,6 +69,7 @@ fn main() {
     for key in keys {
         debug!(root_logger, "Retrieving record from inspire";
                "bibtex_key" => key);
+        let key = libinspire::RecID::new(&key).unwrap();
         if let Some(bibtex_entry) = lib.inspire.fetch_bibtex_with_key(key) {
             bibtex_entries.push(bibtex_entry);
         }

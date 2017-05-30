@@ -340,6 +340,7 @@ dependencies = [
 name = "libinspire"
 version = "0.1.0-alpha"
 dependencies = [
+ "lazy_static 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "regex 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "reqwest 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "select 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
