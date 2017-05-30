@@ -12,13 +12,6 @@ use slog::DrainExt;
 extern crate regex;
 use regex::Regex;
 
-extern crate reqwest;
-use reqwest::Url;
-
-extern crate select;
-use select::document::Document;
-use select::predicate::Name;
-
 pub struct Inspirer {
     logger: slog::Logger,
     pub inspire: libinspire::Api,
