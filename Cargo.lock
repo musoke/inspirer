@@ -3,6 +3,7 @@ name = "inspirer"
 version = "0.1.0-alpha"
 dependencies = [
  "clap 2.22.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libinspire 0.1.0-alpha",
  "regex 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "reqwest 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "select 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -333,6 +334,17 @@ version = "0.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "byteorder 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "libinspire"
+version = "0.1.0-alpha"
+dependencies = [
+ "regex 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "reqwest 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "select 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "slog 1.5.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "slog-stdlog 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
