@@ -83,7 +83,7 @@ impl Inspirer {
             .collect()
     }
 
-    /// # The blg2key function extracts missing references from bibtex logs
+    ///  The blg2key function extracts missing references from bibtex logs
     pub fn blg2key(&self, input_data: String) -> Vec<String> {
 
         let regex = Regex::new(r#"(Warning--|WARN - )I didn't find a database entry for ["']([a-zA-Z]+:\d{4}[a-z]{2,3})["']"#)
