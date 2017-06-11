@@ -17,6 +17,13 @@ pub struct Inspirer {
     pub inspire: libinspire::Api,
 }
 
+pub enum Sources<'a> {
+    Inspire(libinspire::RecID<'a>),
+    Ads,
+    Arxiv,
+    None,
+}
+
 impl Inspirer {
     /// Initialize 'Inspirer'
     ///
