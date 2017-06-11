@@ -67,10 +67,7 @@ fn main() {
     info!(root_logger, "Retrieving entries");
     let mut bibtex_entries: Vec<String> = Vec::new();
     for key in keys {
-        debug!(root_logger, "Retrieving record from inspire";
-               "bibtex_key" => key);
-        let key = libinspire::RecID::new(&key).unwrap();
-        if let Some(bibtex_entry) = lib.inspire.fetch_bibtex_with_key(key) {
+        if let Some(bibtex_entry) = lib.bibtex(&key) {
             bibtex_entries.push(bibtex_entry);
         }
     }
