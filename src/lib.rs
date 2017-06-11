@@ -17,6 +17,7 @@ pub struct Inspirer {
     pub inspire: libinspire::Api,
 }
 
+#[derive(Debug,PartialEq)]
 pub enum Sources<'a> {
     Inspire(libinspire::RecID<'a>),
     Ads,
