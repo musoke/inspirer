@@ -14,7 +14,7 @@ use regex::Regex;
 
 pub struct Inspirer {
     logger: slog::Logger,
-    pub inspire: libinspire::Api,
+    inspire: libinspire::Api,
 }
 
 #[derive(Debug,PartialEq)]
