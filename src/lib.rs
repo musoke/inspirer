@@ -95,6 +95,46 @@ impl Inspirer {
             .map(|c| c.get(2).unwrap().as_str().to_string())
             .collect()
     }
+
+    /// Fetch BibTeX entries
+    pub fn bibtex(&self, key: &str) -> Option<String> {
+        let key = self.classify(key);
+
+        match key {
+            Sources::Inspire(k) => {
+                debug!(self.logger, "Got Inspire record"; "key" => k.id);
+                self.inspire.fetch_bibtex_with_key(k)
+            }
+            _ => {
+                // debug!(self.logger, "Unknown record source"; "key" => key);
+                debug!(self.logger, "Unknown record source");
+                None
+            }
+        }
+    }
+
+    /// Guess a likely source of BibTeX key
+    ///
+    /// # Examples
+    /// ```
+    /// extern crate inspirer;
+    /// extern crate libinspire;
+    /// let inspirer = inspirer::Inspirer::init(None);
+    ///
+    /// assert_eq!(
+    ///     inspirer.classify("Randall:1999ee"),
+    ///     inspirer::Sources::Inspire(libinspire::RecID::new("Randall:1999ee").unwrap())
+    /// );
+    /// ```
+    pub fn classify<'a>(&self, s: &'a str) -> Sources<'a> {
+        if libinspire::validate_recid(s) {
+            debug!(self.logger, "Detected an Inspire record"; "key" => s);
+            Sources::Inspire(libinspire::RecID::new(s).unwrap())
+        } else {
+            debug!(self.logger, "Unknown record type"; "key" => s);
+            Sources::None
+        }
+    }
 }
 
 #[cfg(test)]
