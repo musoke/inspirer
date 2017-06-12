@@ -13,15 +13,24 @@ This currently a rust clone of some features from
 
 ## Installation
 
+### From pre-compiled binaries
+
+TBD
+
+### From source
+
 First, [install rust](https://www.rust-lang.org/en-US/install.html).
 
-To install from git:
+To install from [crates.io](https://crates.io):
+```
+cargo install inspirer
+```
+
+To install the latest version from git:
 ```
 cargo install --git https://github.com/musoke/inspirer
 cargo install --git https://gitlab.com/musoke/inspirer
 ```
-
-To install from [crates.io](https://crates.io): to be released.
 
 I haven't really tested with Windows, but do have tests on [Appveyor](https://ci.appveyor.com/project/musoke/inspirer)
 which seem to pass sometimes.
