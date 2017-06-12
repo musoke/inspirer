@@ -334,7 +334,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "libads"
 version = "0.1.0-alpha"
-source = "git+https://github.com/musoke/libads#75307dcb3657d61190c05490880d03e685f63571"
+source = "git+https://github.com/musoke/libads#abfaf8d1b306f8162d78c9a385cf2cea9e868923"
 dependencies = [
  "lazy_static 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "regex 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -360,7 +360,7 @@ dependencies = [
 [[package]]
 name = "libinspire"
 version = "0.1.0-alpha"
-source = "git+https://github.com/musoke/libinspire#310a8affa94a17e71813f7344150e542c6d72b3e"
+source = "git+https://github.com/musoke/libinspire#268ef2c0096be8a5ff17cfd9ded98b35620477eb"
 dependencies = [
  "lazy_static 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "regex 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
