@@ -3,11 +3,11 @@ Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: test_bibtex.aux
 The style file: unsrt.bst
 Database file #1: test_bibtex.bib
-Warning--I didn't find a database entry for "Janousch:2015mtf"
+Warning--I didn't find a database entry for "Higgs:2014aqa"
 Warning--I didn't find a database entry for "Higgs:2015mei"
 You've used 0 entries,
             1791 wiz_defined-function locations,
-            448 strings with 3578 characters,
+            448 strings with 3572 characters,
 and the built_in function-call counts, 18 in all, are:
 = -- 0
 > -- 0
