@@ -8,7 +8,7 @@ description = "For working with LaTeX, inspirehep.net, and BibTeX/BibLaTeX"
 repository = "https://github.com/musoke/inspirer"
 readme = "README.md"
 
-keywords = ["latex", "bibtex", "physics", "inspire", "inspirehep.net"]
+keywords = ["latex", "bibtex", "physics", "inspire", "inspirehep"]
 categories = ["command-line-utilities", "science"]
 license = "Apache-2.0"
 
