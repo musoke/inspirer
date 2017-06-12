@@ -1,4 +1,5 @@
 extern crate libinspire;
+extern crate libads;
 
 /// Re-export slog
 ///
@@ -15,6 +16,7 @@ use regex::Regex;
 pub struct Inspirer {
     logger: slog::Logger,
     inspire: libinspire::Api,
+    ads: libads::Api,
 }
 
 impl Inspirer {
@@ -34,6 +36,7 @@ impl Inspirer {
             logger: logger,
             // inspire: libinspire::Api::init(Some(logger)),
             inspire: libinspire::Api::init(None),
+            ads: libads::Api::init(None),
         }
     }
 
