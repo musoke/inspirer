@@ -112,7 +112,7 @@ impl Inspirer {
 #[derive(Debug,PartialEq)]
 pub enum Sources<'a> {
     Inspire(libinspire::RecID<'a>),
-    Ads,
+    Ads(libads::BibCode<'a>),
     Arxiv,
     None,
 }
@@ -132,10 +132,23 @@ pub enum Sources<'a> {
 ///     inspirer::Sources::Inspire(libinspire::RecID::new("Randall:1999ee").unwrap())
 /// );
 /// ```
+///
+/// ```
+/// extern crate inspirer;
+/// extern crate libads;
+/// let inspirer = inspirer::Inspirer::init(None);
+///
+/// assert_eq!(
+///     inspirer::Sources::from("1999PhRvL..83.3370R"),
+///     inspirer::Sources::Ads(libads::BibCode::new("1999PhRvL..83.3370R").unwrap())
+/// );
+/// ```
 impl<'a> From<&'a str> for Sources<'a> {
     fn from(s: &'a str) -> Sources<'a> {
         if libinspire::validate_recid(s) {
             Sources::Inspire(libinspire::RecID::new(s).unwrap())
+        } else if libads::validate_bib_code(s) {
+            Sources::Ads(libads::BibCode::new(s).unwrap())
         } else {
             Sources::None
         }
