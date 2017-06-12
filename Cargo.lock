@@ -334,7 +334,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "libads"
 version = "0.1.0-alpha"
-source = "git+https://github.com/musoke/libads#0d04bb567c83231b562437a6339971430d86c1b5"
+source = "git+https://github.com/musoke/libads#75307dcb3657d61190c05490880d03e685f63571"
 dependencies = [
  "lazy_static 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "regex 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",

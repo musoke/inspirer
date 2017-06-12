@@ -100,6 +100,10 @@ impl Inspirer {
                 debug!(self.logger, "Got Inspire record"; "key" => k.id);
                 self.inspire.fetch_bibtex_with_key(k)
             }
+            Sources::Ads(k) => {
+                debug!(self.logger, "Got ADS record"; "key" => k.bibcode);
+                self.ads.fetch_bibtex_with_key(k)
+            }
             _ => {
                 // debug!(self.logger, "Unknown record source"; "key" => key);
                 debug!(self.logger, "Unknown record source");
