@@ -1,3 +1,5 @@
+extern crate libinspire;
+
 /// Re-export slog
 ///
 /// Users of this library can, but don't have to use slog to build their own loggers
@@ -10,17 +12,9 @@ use slog::DrainExt;
 extern crate regex;
 use regex::Regex;
 
-extern crate reqwest;
-use reqwest::Url;
-
-extern crate select;
-use select::document::Document;
-use select::predicate::Name;
-
-use std::io::Read;
-
 pub struct Inspirer {
     logger: slog::Logger,
+    inspire: libinspire::Api,
 }
 
 impl Inspirer {
@@ -34,8 +28,12 @@ impl Inspirer {
     /// inspirer::Inspirer::init(None);
     /// ```
     pub fn init(logger: Option<slog::Logger>) -> Self {
+        let logger = logger.unwrap_or_else(|| slog::Logger::root(slog_stdlog::StdLog.fuse(), o!()));
+
         Inspirer {
-            logger: logger.unwrap_or_else(|| slog::Logger::root(slog_stdlog::StdLog.fuse(), o!())),
+            logger: logger,
+            // inspire: libinspire::Api::init(Some(logger)),
+            inspire: libinspire::Api::init(None),
         }
     }
 
@@ -72,65 +70,72 @@ impl Inspirer {
         let regex = Regex::new(r"(\\citation|\\abx@aux@cite)\{([a-zA-Z]+:\d{4}[a-z]{2,3})\}")
             .unwrap();
 
-        regex.captures_iter(&input_data)
-            .map(|c| {
-                     c.get(2)
-                         .unwrap()
-                         .as_str()
-                         .to_string()
-                 })
+        regex
+            .captures_iter(&input_data)
+            .map(|c| c.get(2).unwrap().as_str().to_string())
             .collect()
     }
 
-    /// # The blg2key function extracts missing references from bibtex logs
+    ///  The blg2key function extracts missing references from bibtex logs
     pub fn blg2key(&self, input_data: String) -> Vec<String> {
 
         let regex = Regex::new(r#"(Warning--|WARN - )I didn't find a database entry for ["']([a-zA-Z]+:\d{4}[a-z]{2,3})["']"#)
             .unwrap();
 
-        regex.captures_iter(&input_data)
-            .map(|c| {
-                     c.get(2)
-                         .unwrap()
-                         .as_str()
-                         .to_string()
-                 })
+        regex
+            .captures_iter(&input_data)
+            .map(|c| c.get(2).unwrap().as_str().to_string())
             .collect()
     }
 
-    /// Fetches BibTeX entries from inspire.net.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// let inspirer = inspirer::Inspirer::init(None);
-    ///
-    /// println!("{}", inspirer.fetch_bibtex_with_key(
-    ///     "Abramovici:1992ah".to_string()).expect("Error"));
-    /// ```
-    pub fn fetch_bibtex_with_key(&self, key: String) -> Option<String> {
+    /// Fetch BibTeX entries
+    pub fn bibtex(&self, key: &str) -> Option<String> {
+        let key = Sources::from(key);
 
-        let mut api_url: Url = Url::parse("https://inspirehep.net")
-            .expect("Unable to parse API URL")
-            .join("search")
-            .unwrap();
-        api_url.query_pairs_mut().append_pair("of", "hx").append_pair("p", &key);
+        match key {
+            Sources::Inspire(k) => {
+                debug!(self.logger, "Got Inspire record"; "key" => k.id);
+                self.inspire.fetch_bibtex_with_key(k)
+            }
+            _ => {
+                // debug!(self.logger, "Unknown record source"; "key" => key);
+                debug!(self.logger, "Unknown record source");
+                None
+            }
+        }
+    }
+}
 
-        debug!(self.logger, "Querying inspire API";
-               "URL" => api_url.to_string());
-        let mut response = reqwest::get(api_url).expect("Failed to send get request");
-        debug!(self.logger, "GET request completed";
-               "HTTP response status" => response.status().to_string());
+#[derive(Debug,PartialEq)]
+pub enum Sources<'a> {
+    Inspire(libinspire::RecID<'a>),
+    Ads,
+    Arxiv,
+    None,
+}
 
-        let mut html = String::new();
-        response.read_to_string(&mut html).expect("Failed to read response.");
-
-        let document = Document::from(html.as_str());
-
-        Some(document.find(Name("pre"))
-                 .first()
-                 .expect("No text found.")
-                 .text())
+/// Guess a likely source for a BibTeX key
+///
+/// Returns `Sources::None` if unable to make a good guess.
+///
+/// # Examples
+/// ```
+/// extern crate inspirer;
+/// extern crate libinspire;
+/// let inspirer = inspirer::Inspirer::init(None);
+///
+/// assert_eq!(
+///     inspirer::Sources::from("Randall:1999ee"),
+///     inspirer::Sources::Inspire(libinspire::RecID::new("Randall:1999ee").unwrap())
+/// );
+/// ```
+impl<'a> From<&'a str> for Sources<'a> {
+    fn from(s: &'a str) -> Sources<'a> {
+        if libinspire::validate_recid(s) {
+            Sources::Inspire(libinspire::RecID::new(s).unwrap())
+        } else {
+            Sources::None
+        }
     }
 }
 
