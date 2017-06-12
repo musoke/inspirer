@@ -17,14 +17,6 @@ pub struct Inspirer {
     inspire: libinspire::Api,
 }
 
-#[derive(Debug,PartialEq)]
-pub enum Sources<'a> {
-    Inspire(libinspire::RecID<'a>),
-    Ads,
-    Arxiv,
-    None,
-}
-
 impl Inspirer {
     /// Initialize 'Inspirer'
     ///
@@ -98,7 +90,7 @@ impl Inspirer {
 
     /// Fetch BibTeX entries
     pub fn bibtex(&self, key: &str) -> Option<String> {
-        let key = self.classify(key);
+        let key = Sources::from(key);
 
         match key {
             Sources::Inspire(k) => {
@@ -112,26 +104,36 @@ impl Inspirer {
             }
         }
     }
+}
 
-    /// Guess a likely source of BibTeX key
-    ///
-    /// # Examples
-    /// ```
-    /// extern crate inspirer;
-    /// extern crate libinspire;
-    /// let inspirer = inspirer::Inspirer::init(None);
-    ///
-    /// assert_eq!(
-    ///     inspirer.classify("Randall:1999ee"),
-    ///     inspirer::Sources::Inspire(libinspire::RecID::new("Randall:1999ee").unwrap())
-    /// );
-    /// ```
-    pub fn classify<'a>(&self, s: &'a str) -> Sources<'a> {
+#[derive(Debug,PartialEq)]
+pub enum Sources<'a> {
+    Inspire(libinspire::RecID<'a>),
+    Ads,
+    Arxiv,
+    None,
+}
+
+/// Guess a likely source for a BibTeX key
+///
+/// Returns `Sources::None` if unable to make a good guess.
+///
+/// # Examples
+/// ```
+/// extern crate inspirer;
+/// extern crate libinspire;
+/// let inspirer = inspirer::Inspirer::init(None);
+///
+/// assert_eq!(
+///     inspirer::Sources::from("Randall:1999ee"),
+///     inspirer::Sources::Inspire(libinspire::RecID::new("Randall:1999ee").unwrap())
+/// );
+/// ```
+impl<'a> From<&'a str> for Sources<'a> {
+    fn from(s: &'a str) -> Sources<'a> {
         if libinspire::validate_recid(s) {
-            debug!(self.logger, "Detected an Inspire record"; "key" => s);
             Sources::Inspire(libinspire::RecID::new(s).unwrap())
         } else {
-            debug!(self.logger, "Unknown record type"; "key" => s);
             Sources::None
         }
     }
