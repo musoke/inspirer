@@ -5,11 +5,10 @@
 [![Gitlab build status](https://gitlab.com/musoke/inspirer/badges/master/build.svg)](https://gitlab.com/musoke/inspirer/pipelines)
 
 
-For fetching BibTeX entries from [INSPIRE](https://inspirehep.net/).
+For fetching BibTeX entries from [INSPIRE](https://inspirehep.net/) and [ADS](http://adsabs.harvard.edu/abstract_service.html).
 
 This currently a rust clone of some features from
-[inspiretools](https://github.com/DavidMStraub/inspiretools).
-I will add more in the future.
+[inspiretools](https://github.com/DavidMStraub/inspiretools), with the added ability to fetch BibTeX entries from [ADS](http://adsabs.harvard.edu/abstract_service.html).
 
 
 ## Installation
@@ -25,7 +24,9 @@ cargo install --git https://gitlab.com/musoke/inspirer
 To install from [crates.io](https://crates.io): to be released.
 
 I haven't really tested with Windows, but do have tests on [Appveyor](https://ci.appveyor.com/project/musoke/inspirer)
-which seem to pass sometimes [![AppVeyor build status](https://img.shields.io/appveyor/ci/musoke/inspirer.svg)](https://ci.appveyor.com/project/musoke/inspirer).
+which seem to pass sometimes.
+
+[![AppVeyor build status](https://img.shields.io/appveyor/ci/musoke/inspirer.svg)](https://ci.appveyor.com/project/musoke/inspirer)
 
 
 ## Usage

@@ -1,4 +1,5 @@
 extern crate libinspire;
+extern crate libads;
 
 /// Re-export slog
 ///
@@ -15,6 +16,7 @@ use regex::Regex;
 pub struct Inspirer {
     logger: slog::Logger,
     inspire: libinspire::Api,
+    ads: libads::Api,
 }
 
 impl Inspirer {
@@ -34,6 +36,7 @@ impl Inspirer {
             logger: logger,
             // inspire: libinspire::Api::init(Some(logger)),
             inspire: libinspire::Api::init(None),
+            ads: libads::Api::init(None),
         }
     }
 
@@ -43,6 +46,8 @@ impl Inspirer {
     /// # Examples
     ///
     /// ## bibtex
+    ///
+    /// Inspire-formatted BibTeX key:
     ///
     /// ```
     /// let inspirer = inspirer::Inspirer::init(None);
@@ -54,7 +59,21 @@ impl Inspirer {
     /// assert_eq!(inspirer.aux2key(input), vec!("Abramovici:1992ah"));
     /// ```
     ///
+    /// ADS-formatted BibTeX Key:
+    ///
+    /// ```
+    /// let inspirer = inspirer::Inspirer::init(None);
+    ///
+    /// let input =
+    /// r"\relax
+    /// \citation{1998PhRvD..58h4020O}".to_string();
+    ///
+    /// assert_eq!(inspirer.aux2key(input), vec!("1998PhRvD..58h4020O"));
+    /// ```
+    ///
     /// ## biber
+    ///
+    /// Inspire-formatted BibLaTeX key:
     ///
     /// ```
     /// let inspirer = inspirer::Inspirer::init(None);
@@ -67,24 +86,49 @@ impl Inspirer {
     /// ```
     pub fn aux2key(&self, input_data: String) -> Vec<String> {
 
-        let regex = Regex::new(r"(\\citation|\\abx@aux@cite)\{([a-zA-Z]+:\d{4}[a-z]{2,3})\}")
-            .unwrap();
+        // TODO: check on the exact characters allowed in keys
+        let regex = Regex::new(r"(\\citation|\\abx@aux@cite)\{(.+)\}").unwrap();
 
         regex
             .captures_iter(&input_data)
             .map(|c| c.get(2).unwrap().as_str().to_string())
+            // TODO just return the iterator: makes more sense with rayon
             .collect()
     }
 
-    ///  The blg2key function extracts missing references from bibtex logs
+    /// The blg2key function extracts missing references from bibtex logs
+    ///
+    /// # Examples
+    ///
+    /// ADS-formatted BibTeX key:
+    ///
+    /// ```
+    /// let inspirer = inspirer::Inspirer::init(None);
+    ///
+    /// let input =
+    /// r##"
+    /// This is BibTeX, Version 0.99d (TeX Live 2016/Arch Linux)
+    /// Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+    /// The top-level auxiliary file: test_bibtex.aux
+    /// The style file: unsrt.bst
+    /// Database file #1: test_bibtex.bib
+    /// Warning--I didn't find a database entry for "2015CQGra..32g4001L"
+    /// You've used 0 entries,
+    /// ....
+    /// "##.to_string();
+    ///
+    /// assert_eq!(inspirer.blg2key(input), vec!("2015CQGra..32g4001L"));
+    /// ```
     pub fn blg2key(&self, input_data: String) -> Vec<String> {
 
-        let regex = Regex::new(r#"(Warning--|WARN - )I didn't find a database entry for ["']([a-zA-Z]+:\d{4}[a-z]{2,3})["']"#)
-            .unwrap();
+        let regex =
+            Regex::new(r#"(Warning--|WARN - )I didn't find a database entry for ["'](.+)["']"#)
+                .unwrap();
 
         regex
             .captures_iter(&input_data)
             .map(|c| c.get(2).unwrap().as_str().to_string())
+            // TODO just return the iterator: makes more sense with rayon
             .collect()
     }
 
@@ -96,6 +140,10 @@ impl Inspirer {
             Sources::Inspire(k) => {
                 debug!(self.logger, "Got Inspire record"; "key" => k.id);
                 self.inspire.fetch_bibtex_with_key(k)
+            }
+            Sources::Ads(k) => {
+                debug!(self.logger, "Got ADS record"; "key" => k.bibcode);
+                self.ads.fetch_bibtex_with_key(k)
             }
             _ => {
                 // debug!(self.logger, "Unknown record source"; "key" => key);
@@ -109,7 +157,7 @@ impl Inspirer {
 #[derive(Debug,PartialEq)]
 pub enum Sources<'a> {
     Inspire(libinspire::RecID<'a>),
-    Ads,
+    Ads(libads::BibCode<'a>),
     Arxiv,
     None,
 }
@@ -129,10 +177,23 @@ pub enum Sources<'a> {
 ///     inspirer::Sources::Inspire(libinspire::RecID::new("Randall:1999ee").unwrap())
 /// );
 /// ```
+///
+/// ```
+/// extern crate inspirer;
+/// extern crate libads;
+/// let inspirer = inspirer::Inspirer::init(None);
+///
+/// assert_eq!(
+///     inspirer::Sources::from("1999PhRvL..83.3370R"),
+///     inspirer::Sources::Ads(libads::BibCode::new("1999PhRvL..83.3370R").unwrap())
+/// );
+/// ```
 impl<'a> From<&'a str> for Sources<'a> {
     fn from(s: &'a str) -> Sources<'a> {
         if libinspire::validate_recid(s) {
             Sources::Inspire(libinspire::RecID::new(s).unwrap())
+        } else if libads::validate_bib_code(s) {
+            Sources::Ads(libads::BibCode::new(s).unwrap())
         } else {
             Sources::None
         }
