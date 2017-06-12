@@ -47,6 +47,8 @@ impl Inspirer {
     ///
     /// ## bibtex
     ///
+    /// Inspire-formatted BibTeX key:
+    ///
     /// ```
     /// let inspirer = inspirer::Inspirer::init(None);
     ///
@@ -57,7 +59,21 @@ impl Inspirer {
     /// assert_eq!(inspirer.aux2key(input), vec!("Abramovici:1992ah"));
     /// ```
     ///
+    /// ADS-formatted BibTeX Key:
+    ///
+    /// ```
+    /// let inspirer = inspirer::Inspirer::init(None);
+    ///
+    /// let input =
+    /// r"\relax
+    /// \citation{1998PhRvD..58h4020O}".to_string();
+    ///
+    /// assert_eq!(inspirer.aux2key(input), vec!("1998PhRvD..58h4020O"));
+    /// ```
+    ///
     /// ## biber
+    ///
+    /// Inspire-formatted BibLaTeX key:
     ///
     /// ```
     /// let inspirer = inspirer::Inspirer::init(None);
@@ -70,24 +86,49 @@ impl Inspirer {
     /// ```
     pub fn aux2key(&self, input_data: String) -> Vec<String> {
 
-        let regex = Regex::new(r"(\\citation|\\abx@aux@cite)\{([a-zA-Z]+:\d{4}[a-z]{2,3})\}")
-            .unwrap();
+        // TODO: check on the exact characters allowed in keys
+        let regex = Regex::new(r"(\\citation|\\abx@aux@cite)\{(.+)\}").unwrap();
 
         regex
             .captures_iter(&input_data)
             .map(|c| c.get(2).unwrap().as_str().to_string())
+            // TODO just return the iterator: makes more sense with rayon
             .collect()
     }
 
-    ///  The blg2key function extracts missing references from bibtex logs
+    /// The blg2key function extracts missing references from bibtex logs
+    ///
+    /// # Examples
+    ///
+    /// ADS-formatted BibTeX key:
+    ///
+    /// ```
+    /// let inspirer = inspirer::Inspirer::init(None);
+    ///
+    /// let input =
+    /// r##"
+    /// This is BibTeX, Version 0.99d (TeX Live 2016/Arch Linux)
+    /// Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+    /// The top-level auxiliary file: test_bibtex.aux
+    /// The style file: unsrt.bst
+    /// Database file #1: test_bibtex.bib
+    /// Warning--I didn't find a database entry for "2015CQGra..32g4001L"
+    /// You've used 0 entries,
+    /// ....
+    /// "##.to_string();
+    ///
+    /// assert_eq!(inspirer.blg2key(input), vec!("2015CQGra..32g4001L"));
+    /// ```
     pub fn blg2key(&self, input_data: String) -> Vec<String> {
 
-        let regex = Regex::new(r#"(Warning--|WARN - )I didn't find a database entry for ["']([a-zA-Z]+:\d{4}[a-z]{2,3})["']"#)
-            .unwrap();
+        let regex =
+            Regex::new(r#"(Warning--|WARN - )I didn't find a database entry for ["'](.+)["']"#)
+                .unwrap();
 
         regex
             .captures_iter(&input_data)
             .map(|c| c.get(2).unwrap().as_str().to_string())
+            // TODO just return the iterator: makes more sense with rayon
             .collect()
     }
 
