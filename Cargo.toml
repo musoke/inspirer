@@ -1,8 +1,8 @@
 [package]
 name = "inspirer"
 authors = ["Nathan Musoke <nathan.musoke@gmail.com>"]
-version = "0.1.0-alpha"
-publish = true
+version = "0.1.0-beta"
+publish = false
 description = "For working with LaTeX, inspirehep.net, and BibTeX/BibLaTeX"
 
 repository = "https://github.com/musoke/inspirer"
