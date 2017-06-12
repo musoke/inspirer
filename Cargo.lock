@@ -3,8 +3,8 @@ name = "inspirer"
 version = "0.1.0-alpha"
 dependencies = [
  "clap 2.24.2 (registry+https://github.com/rust-lang/crates.io-index)",
- "libads 0.1.0-alpha (git+https://github.com/musoke/libads)",
- "libinspire 0.1.0-alpha (git+https://github.com/musoke/libinspire)",
+ "libads 0.1.0-alpha (registry+https://github.com/rust-lang/crates.io-index)",
+ "libinspire 0.1.0-alpha (registry+https://github.com/rust-lang/crates.io-index)",
  "regex 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "reqwest 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "select 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -334,7 +334,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "libads"
 version = "0.1.0-alpha"
-source = "git+https://github.com/musoke/libads#abfaf8d1b306f8162d78c9a385cf2cea9e868923"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "lazy_static 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "regex 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -360,7 +360,7 @@ dependencies = [
 [[package]]
 name = "libinspire"
 version = "0.1.0-alpha"
-source = "git+https://github.com/musoke/libinspire#268ef2c0096be8a5ff17cfd9ded98b35620477eb"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "lazy_static 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "regex 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -926,10 +926,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum kernel32-sys 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)" = "7507624b29483431c0ba2d82aece8ca6cdba9382bff4ddd0f7490560c056098d"
 "checksum language-tags 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)" = "a91d884b6667cd606bb5a69aa0c99ba811a115fc68915e7056ec08a46e93199a"
 "checksum lazy_static 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)" = "3b37545ab726dd833ec6420aaba8231c5b320814b9029ad585555d2a03e94fbf"
-"checksum libads 0.1.0-alpha (git+https://github.com/musoke/libads)" = "<none>"
+"checksum libads 0.1.0-alpha (registry+https://github.com/rust-lang/crates.io-index)" = "4a71f408043bb2c5abdb601ebb3134ff4bd854087cda916ed373332ce92f9a75"
 "checksum libc 0.2.23 (registry+https://github.com/rust-lang/crates.io-index)" = "e7eb6b826bfc1fdea7935d46556250d1799b7fe2d9f7951071f4291710665e3e"
 "checksum libflate 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)" = "591fb1342cbc9be24883f22f97bd7ede01dd1f3821833c4ff07435c7270cc1f6"
-"checksum libinspire 0.1.0-alpha (git+https://github.com/musoke/libinspire)" = "<none>"
+"checksum libinspire 0.1.0-alpha (registry+https://github.com/rust-lang/crates.io-index)" = "89879ed3650a2334a9ebf16913b549eeb665fabe7e38feaa7acefc54dbfecd47"
 "checksum log 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)" = "880f77541efa6e5cc74e76910c9884d9859683118839d6a1dc3b11e63512565b"
 "checksum mac 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "c41e0c4fef86961ac6d6f8a82609f55f31b05e4fce149ac5710e439df7619ba4"
 "checksum matches 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)" = "100aabe6b8ff4e4a7e32c1c13523379802df0772b82466207ac25b013f193376"
