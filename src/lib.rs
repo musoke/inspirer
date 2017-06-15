@@ -13,6 +13,10 @@ use slog::DrainExt;
 extern crate regex;
 use regex::Regex;
 
+use std::fs::File;
+use std::io::{Read, BufReader};
+use std::io::{Write, BufWriter};
+
 pub struct Inspirer {
     logger: slog::Logger,
     inspire: libinspire::Api,
@@ -38,6 +42,67 @@ impl Inspirer {
             inspire: libinspire::Api::init(None),
             ads: libads::Api::init(None),
         }
+    }
+
+    /// Read input from file or stdin
+    ///
+    /// # Examples
+    /// ```
+    /// ```
+    pub fn get_input(&self, input_source: Option<&str>) -> String {
+        let mut input_data = String::new();
+
+        let mut input_file: File;
+        let mut stdin = std::io::stdin();
+
+        let reader: &mut Read = match input_source {
+            Some(file_name) => {
+                info!(self.logger, "Reading from file";
+                      "file_name" => file_name);
+                input_file = File::open(file_name).expect("File not found");
+                &mut input_file
+            }
+            None => {
+                info!(self.logger, "Reading from stdin");
+                &mut stdin
+            }
+        };
+        let mut reader = BufReader::new(reader);
+        reader.read_to_string(&mut input_data).unwrap();
+
+        input_data
+    }
+
+    /// Write output to file or stdout
+    pub fn put_output(&self, output_dest: Option<&str>, output: Vec<String>) {
+        let mut stdout = std::io::stdout();
+        let mut output_file: std::fs::File;
+
+        let writer: &mut Write = match output_dest {
+            Some(file_name) => {
+                info!(self.logger, "Writing to file";
+                      "file_name" => file_name);
+                output_file = std::fs::OpenOptions::new()
+                    .append(true)
+                    .create(true)
+                    .open(file_name)
+                    .unwrap();
+                &mut output_file
+            }
+            None => {
+                info!(self.logger, "Writing to stdout");
+                // stdout.lock();
+                &mut stdout
+            }
+        };
+
+        let mut writer = BufWriter::new(writer);
+
+        for o in output {
+            writer.write_all(&o.as_bytes()).unwrap();
+        }
+
+        writer.flush().unwrap();
     }
 
     /// The `aux2key` function extracts TeX keys from LaTeX .aux files. These can be for either

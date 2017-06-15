@@ -10,10 +10,6 @@ use slog::DrainExt;
 
 use clap::{App, Arg};
 
-use std::fs::File;
-use std::io::{Read, BufReader};
-use std::io::{Write, BufWriter};
-
 fn main() {
 
     // Initialize logging
@@ -38,25 +34,7 @@ fn main() {
         .get_matches();
 
     // Get input from specified file or stdin
-    let mut input_data = String::new();
-
-    let mut input_file: File;
-    let mut stdin = std::io::stdin();
-
-    let reader: &mut Read = match matches.value_of("INPUT") {
-        Some(file_name) => {
-            info!(root_logger, "Reading from file";
-                  "file_name" => file_name);
-            input_file = File::open(file_name).expect("File not found");
-            &mut input_file
-        }
-        None => {
-            info!(root_logger, "Reading from stdin");
-            &mut stdin
-        }
-    };
-    let mut reader = BufReader::new(reader);
-    reader.read_to_string(&mut input_data).unwrap();
+    let input_data = lib.get_input(matches.value_of("INPUT"));
 
     // Extract BibTeX tags from document
     let keys = lib.blg2key(input_data);
@@ -73,34 +51,7 @@ fn main() {
     }
 
     // Write BibTeX entries to file or stdout
-    let mut stdout = std::io::stdout();
-    let mut output_file: std::fs::File;
-
-    let writer: &mut Write = match matches.value_of("OUTPUT") {
-        Some(file_name) => {
-            info!(root_logger, "Writing to file";
-                  "file_name" => file_name);
-            output_file = std::fs::OpenOptions::new()
-                .append(true)
-                .create(true)
-                .open(file_name)
-                .unwrap();
-            &mut output_file
-        }
-        None => {
-            info!(root_logger, "Writing to stdout");
-            // stdout.lock();
-            &mut stdout
-        }
-    };
-
-    let mut writer = BufWriter::new(writer);
-
-    for bibtex_entry in bibtex_entries {
-        writer.write_all(&bibtex_entry.as_bytes()).unwrap();
-    }
-
-    writer.flush().unwrap();
+    lib.put_output(matches.value_of("OUTPUT"), bibtex_entries);
 
     info!(root_logger, "Done");
 }
