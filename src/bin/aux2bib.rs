@@ -10,8 +10,6 @@ use slog::DrainExt;
 
 use clap::{App, Arg};
 
-use std::io::{Write, BufWriter};
-
 fn main() {
 
     // Initialize logging
@@ -53,34 +51,7 @@ fn main() {
     }
 
     // Write BibTeX entries to file or stdout
-    let mut stdout = std::io::stdout();
-    let mut output_file: std::fs::File;
-
-    let writer: &mut Write = match matches.value_of("OUTPUT") {
-        Some(file_name) => {
-            info!(root_logger, "Writing to file";
-                  "file_name" => file_name);
-            output_file = std::fs::OpenOptions::new()
-                .append(true)
-                .create(true)
-                .open(file_name)
-                .unwrap();
-            &mut output_file
-        }
-        None => {
-            info!(root_logger, "Writing to stdout");
-            // stdout.lock();
-            &mut stdout
-        }
-    };
-
-    let mut writer = BufWriter::new(writer);
-
-    for bibtex_entry in bibtex_entries {
-        writer.write_all(&bibtex_entry.as_bytes()).unwrap();
-    }
-
-    writer.flush().unwrap();
+    lib.put_output(matches.value_of("OUTPUT"), bibtex_entries);
 
     info!(root_logger, "Done");
 }

@@ -73,6 +73,38 @@ impl Inspirer {
         input_data
     }
 
+    /// Write output to file or stdout
+    pub fn put_output(&self, output_dest: Option<&str>, output: Vec<String>) {
+        let mut stdout = std::io::stdout();
+        let mut output_file: std::fs::File;
+
+        let writer: &mut Write = match output_dest {
+            Some(file_name) => {
+                info!(self.logger, "Writing to file";
+                      "file_name" => file_name);
+                output_file = std::fs::OpenOptions::new()
+                    .append(true)
+                    .create(true)
+                    .open(file_name)
+                    .unwrap();
+                &mut output_file
+            }
+            None => {
+                info!(self.logger, "Writing to stdout");
+                // stdout.lock();
+                &mut stdout
+            }
+        };
+
+        let mut writer = BufWriter::new(writer);
+
+        for o in output {
+            writer.write_all(&o.as_bytes()).unwrap();
+        }
+
+        writer.flush().unwrap();
+    }
+
     /// The `aux2key` function extracts TeX keys from LaTeX .aux files. These can be for either
     /// BibTeX or BibLaTeX.
     ///
