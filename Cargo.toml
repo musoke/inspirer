@@ -28,3 +28,6 @@ lazy_static = "0.2.8"
 
 libinspire = "0.1.0-alpha"
 libads = "0.1.0-alpha"
+
+[profile.release]
+lto = true
