@@ -10,6 +10,8 @@ extern crate slog_stdlog;
 
 use slog::DrainExt;
 
+#[macro_use]
+extern crate lazy_static;
 extern crate regex;
 use regex::Regex;
 
@@ -151,10 +153,13 @@ impl Inspirer {
     /// ```
     pub fn aux2key(&self, input_data: String) -> Vec<String> {
 
-        // TODO: check on the exact characters allowed in keys
-        let regex = Regex::new(r"(\\citation|\\abx@aux@cite)\{(.+)\}").unwrap();
+        lazy_static! {
+            // TODO: check on the exact characters allowed in keys
+            static ref AUX_REGEX: Regex = Regex::new(
+                r"(\\citation|\\abx@aux@cite)\{(.+)\}").unwrap();
+        }
 
-        regex
+        AUX_REGEX
             .captures_iter(&input_data)
             .map(|c| c.get(2).unwrap().as_str().to_string())
             // TODO just return the iterator: makes more sense with rayon
@@ -186,11 +191,13 @@ impl Inspirer {
     /// ```
     pub fn blg2key(&self, input_data: String) -> Vec<String> {
 
-        let regex =
-            Regex::new(r#"(Warning--|WARN - )I didn't find a database entry for ["'](.+)["']"#)
-                .unwrap();
+        lazy_static! {
+            static ref BLG_REGEX: Regex = Regex::new(
+                r#"(Warning--|WARN - )I didn't find a database entry for ["'](.+)["']"#,
+            ).unwrap();
+        }
 
-        regex
+        BLG_REGEX
             .captures_iter(&input_data)
             .map(|c| c.get(2).unwrap().as_str().to_string())
             // TODO just return the iterator: makes more sense with rayon
