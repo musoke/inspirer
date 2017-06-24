@@ -20,8 +20,9 @@ fn cmd_aux2bib() -> Command {
         path = get_bin_dir().join("aux2bib.exe");
     }
     if !path.is_file() {
-        panic!("aux2bib binary not found");
+        panic!("aux2bib binary {:?} was not found", path);
     }
+    println!("{:?}", path);
     let mut cmd = Command::new(path);
     cmd.env_clear();
 
@@ -36,7 +37,7 @@ fn cmd_blg2bib() -> Command {
         path = get_bin_dir().join("blg2bib.exe");
     }
     if !path.is_file() {
-        panic!("blg2bib binary not found");
+        panic!("blg2bib binary {:?} was not found", path);
     }
     let mut cmd = Command::new(path);
     cmd.env_clear();
