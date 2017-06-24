@@ -45,6 +45,7 @@ fn cmd_blg2bib() -> Command {
     cmd
 }
 
+#[cfg(not(windows))]
 #[test]
 fn aux2bib_runs() {
     let mut cmd = cmd_aux2bib().arg("--help").spawn().expect(
@@ -57,6 +58,7 @@ fn aux2bib_runs() {
 
 }
 
+#[cfg(not(windows))]
 #[test]
 fn blg2bib_runs() {
     let mut cmd = cmd_blg2bib().arg("--help").spawn().expect(
