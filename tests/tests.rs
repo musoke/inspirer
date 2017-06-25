@@ -6,6 +6,8 @@ use std::io::Write;
 extern crate nom_bibtex;
 use nom_bibtex::Bibtex;
 
+mod text;
+
 fn get_bin_dir() -> PathBuf {
     env::current_exe()
         .expect("test bin's directory")
@@ -122,17 +124,9 @@ fn aux2bib_stdin_bibtex() {
 
     {
         let stdin = child.stdin.as_mut().expect("Failed to get stdin");
-        stdin
-            .write_all(
-                b"\
-\\relax 
-\\citation{Higgs:2014aqa}
-\\citation{Higgs:2015mei}
-\\bibstyle{unsrt}
-\\bibdata{test_bibtex}
-        ",
-            )
-            .expect("Failed to write to stdin");
+        stdin.write_all(text::AUX_BIBTEX).expect(
+            "Failed to write to stdin",
+        );
     }
 
     let output = child.wait_with_output().expect("Failed to wait on aux2bib");
