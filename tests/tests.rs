@@ -63,6 +63,112 @@ fn cmd_blg2bib() -> Command {
     cmd
 }
 
+fn check_output_aux_bibtex(bibtex: &Bibtex) {
+    let bib = bibtex.bibliographies();
+    assert_eq!(2, bib.len());
+
+    // Output could conceivably change in future, so just check that some things are right
+    assert_eq!(bib[0].entry_type(), "article");
+    assert_eq!(bib[0].citation_key(), "Higgs:2014aqa");
+    assert_eq!(
+        bib[0].tags()[0],
+        ("author".into(), "Higgs, Peter W.".into())
+    );
+    assert_eq!(bib[0].tags()[1], (
+        "title".into(),
+        "{Nobel Lecture: Evading the Goldstone theorem}"
+            .into(),
+    ));
+    assert_eq!(bib[0].tags()[4], ("year".into(), "2014".into()));
+
+    assert_eq!(bib[1].entry_type(), "article");
+    assert_eq!(bib[1].citation_key(), "Higgs:2015mei");
+    assert_eq!(bib[1].tags()[0], ("author".into(), "Higgs, P. W.".into()));
+    assert_eq!(bib[1].tags()[1], (
+        "title".into(),
+        "{Evading the Goldstone theorem}".into(),
+    ));
+    assert_eq!(bib[1].tags()[4], ("year".into(), "2015".into()));
+}
+
+fn check_output_aux_biblatex(bibtex: &Bibtex) {
+    let bib = bibtex.bibliographies();
+    assert_eq!(4, bib.len());
+
+    // Output could conceivably change in future, so just check that some things are right
+    assert_eq!(bib[0].entry_type(), "article");
+    assert_eq!(bib[0].citation_key(), "Guth:1980zm");
+    assert_eq!(bib[0].tags()[0], ("author".into(), "Guth, Alan H.".into()));
+    assert_eq!(bib[0].tags()[1], (
+        "title".into(),
+        "{The Inflationary Universe: A Possible Solution to the\n                        Horizon and Flatness Problems}"
+            .into(),
+    ));
+    assert_eq!(bib[0].tags()[4], ("year".into(), "1981".into()));
+
+    assert_eq!(bib[3].entry_type(), "ARTICLE");
+    assert_eq!(bib[3].citation_key(), "1982PhRvL..48.1220A");
+    assert_eq!(bib[3].tags()[1], (
+        "title".into(),
+        "{Cosmology for grand unified theories with radiatively induced symmetry breaking}"
+            .into(),
+    ));
+    assert_eq!(bib[3].tags()[4], ("year".into(), "1982".into()));
+}
+
+fn check_output_blg_bibtex(bibtex: &Bibtex) {
+    let bib = bibtex.bibliographies();
+    assert_eq!(2, bib.len());
+
+    // Output could conceivably change in future, so just check that some things are right
+    assert_eq!(bib[0].entry_type(), "article");
+    assert_eq!(bib[0].citation_key(), "Higgs:2014aqa");
+    assert_eq!(
+        bib[0].tags()[0],
+        ("author".into(), "Higgs, Peter W.".into())
+    );
+    assert_eq!(bib[0].tags()[1], (
+        "title".into(),
+        "{Nobel Lecture: Evading the Goldstone theorem}"
+            .into(),
+    ));
+    assert_eq!(bib[0].tags()[4], ("year".into(), "2014".into()));
+
+    assert_eq!(bib[1].entry_type(), "article");
+    assert_eq!(bib[1].citation_key(), "Higgs:2015mei");
+    assert_eq!(bib[1].tags()[0], ("author".into(), "Higgs, P. W.".into()));
+    assert_eq!(bib[1].tags()[1], (
+        "title".into(),
+        "{Evading the Goldstone theorem}".into(),
+    ));
+    assert_eq!(bib[1].tags()[4], ("year".into(), "2015".into()));
+}
+
+fn check_output_blg_biblatex(bibtex: &Bibtex) {
+    let bib = bibtex.bibliographies();
+    assert_eq!(4, bib.len());
+
+    // Output could conceivably change in future, so just check that some things are right
+    assert_eq!(bib[0].entry_type(), "article");
+    assert_eq!(bib[0].citation_key(), "Guth:1980zm");
+    assert_eq!(bib[0].tags()[0], ("author".into(), "Guth, Alan H.".into()));
+    assert_eq!(bib[0].tags()[1], (
+        "title".into(),
+        "{The Inflationary Universe: A Possible Solution to the\n                        Horizon and Flatness Problems}"
+            .into(),
+    ));
+    assert_eq!(bib[0].tags()[4], ("year".into(), "1981".into()));
+
+    assert_eq!(bib[3].entry_type(), "ARTICLE");
+    assert_eq!(bib[3].citation_key(), "1982PhRvL..48.1220A");
+    assert_eq!(bib[3].tags()[1], (
+        "title".into(),
+        "{Cosmology for grand unified theories with radiatively induced symmetry breaking}"
+            .into(),
+    ));
+    assert_eq!(bib[3].tags()[4], ("year".into(), "1982".into()));
+}
+
 #[cfg(not(windows))]
 #[test]
 fn aux2bib_runs() {
@@ -89,7 +195,7 @@ fn blg2bib_runs() {
 
 #[cfg(not(windows))]
 #[test]
-fn aux2bib_stdin_empty() {
+fn aux2bib_stdin_stdout_empty() {
     let mut child = cmd_aux2bib().stdin(Stdio::piped()).spawn().expect(
         "Failed to execute aux2bib",
     );
@@ -107,7 +213,7 @@ fn aux2bib_stdin_empty() {
 
 #[cfg(not(windows))]
 #[test]
-fn blg2bib_stdin_empty() {
+fn blg2bib_stdin_stdout_empty() {
     let mut child = cmd_blg2bib().stdin(Stdio::piped()).spawn().expect(
         "Failed to execute blg2bib",
     );
@@ -125,7 +231,7 @@ fn blg2bib_stdin_empty() {
 
 #[cfg(not(windows))]
 #[test]
-fn aux2bib_stdin_bibtex() {
+fn aux2bib_stdin_stdout_bibtex() {
     let mut child = cmd_aux2bib().stdin(Stdio::piped()).spawn().expect(
         "Failed to execute aux2bib",
     );
@@ -142,36 +248,13 @@ fn aux2bib_stdin_bibtex() {
 
     let bibtex = Bibtex::parse(std::str::from_utf8(&output.stdout).unwrap())
         .expect("Valid bibtex file content");
-    let bib = bibtex.bibliographies();
-    assert_eq!(2, bib.len());
 
-    // Output could conceivably change in future, so just check that some things are right
-    assert_eq!(bib[0].entry_type(), "article");
-    assert_eq!(bib[0].citation_key(), "Higgs:2014aqa");
-    assert_eq!(
-        bib[0].tags()[0],
-        ("author".into(), "Higgs, Peter W.".into())
-    );
-    assert_eq!(bib[0].tags()[1], (
-        "title".into(),
-        "{Nobel Lecture: Evading the Goldstone theorem}"
-            .into(),
-    ));
-    assert_eq!(bib[0].tags()[4], ("year".into(), "2014".into()));
-
-    assert_eq!(bib[1].entry_type(), "article");
-    assert_eq!(bib[1].citation_key(), "Higgs:2015mei");
-    assert_eq!(bib[1].tags()[0], ("author".into(), "Higgs, P. W.".into()));
-    assert_eq!(bib[1].tags()[1], (
-        "title".into(),
-        "{Evading the Goldstone theorem}".into(),
-    ));
-    assert_eq!(bib[1].tags()[4], ("year".into(), "2015".into()));
+    check_output_aux_bibtex(&bibtex);
 }
 
 #[cfg(not(windows))]
 #[test]
-fn aux2bib_stdin_biblatex() {
+fn aux2bib_stdin_stdout_biblatex() {
     let mut child = cmd_aux2bib().stdin(Stdio::piped()).spawn().expect(
         "Failed to execute aux2bib",
     );
@@ -191,33 +274,13 @@ fn aux2bib_stdin_biblatex() {
         std::str::from_utf8(&output.stdout).unwrap(),
     ].join("\n");
     let bibtex = Bibtex::parse(bibtex_raw).expect("Valid bibtex file content");
-    let bib = bibtex.bibliographies();
-    assert_eq!(4, bib.len());
 
-    // Output could conceivably change in future, so just check that some things are right
-    assert_eq!(bib[0].entry_type(), "article");
-    assert_eq!(bib[0].citation_key(), "Guth:1980zm");
-    assert_eq!(bib[0].tags()[0], ("author".into(), "Guth, Alan H.".into()));
-    assert_eq!(bib[0].tags()[1], (
-        "title".into(),
-        "{The Inflationary Universe: A Possible Solution to the\n                        Horizon and Flatness Problems}"
-            .into(),
-    ));
-    assert_eq!(bib[0].tags()[4], ("year".into(), "1981".into()));
-
-    assert_eq!(bib[3].entry_type(), "ARTICLE");
-    assert_eq!(bib[3].citation_key(), "1982PhRvL..48.1220A");
-    assert_eq!(bib[3].tags()[1], (
-        "title".into(),
-        "{Cosmology for grand unified theories with radiatively induced symmetry breaking}"
-            .into(),
-    ));
-    assert_eq!(bib[3].tags()[4], ("year".into(), "1982".into()));
+    check_output_aux_biblatex(&bibtex);
 }
 
 #[cfg(not(windows))]
 #[test]
-fn blg2bib_stdin_bibtex() {
+fn blg2bib_stdin_stdout_bibtex() {
     let mut child = cmd_blg2bib().stdin(Stdio::piped()).spawn().expect(
         "Failed to execute aux2bib",
     );
@@ -234,36 +297,13 @@ fn blg2bib_stdin_bibtex() {
 
     let bibtex = Bibtex::parse(std::str::from_utf8(&output.stdout).unwrap())
         .expect("Valid bibtex file content");
-    let bib = bibtex.bibliographies();
-    assert_eq!(2, bib.len());
 
-    // Output could conceivably change in future, so just check that some things are right
-    assert_eq!(bib[0].entry_type(), "article");
-    assert_eq!(bib[0].citation_key(), "Higgs:2014aqa");
-    assert_eq!(
-        bib[0].tags()[0],
-        ("author".into(), "Higgs, Peter W.".into())
-    );
-    assert_eq!(bib[0].tags()[1], (
-        "title".into(),
-        "{Nobel Lecture: Evading the Goldstone theorem}"
-            .into(),
-    ));
-    assert_eq!(bib[0].tags()[4], ("year".into(), "2014".into()));
-
-    assert_eq!(bib[1].entry_type(), "article");
-    assert_eq!(bib[1].citation_key(), "Higgs:2015mei");
-    assert_eq!(bib[1].tags()[0], ("author".into(), "Higgs, P. W.".into()));
-    assert_eq!(bib[1].tags()[1], (
-        "title".into(),
-        "{Evading the Goldstone theorem}".into(),
-    ));
-    assert_eq!(bib[1].tags()[4], ("year".into(), "2015".into()));
+    check_output_blg_bibtex(&bibtex);
 }
 
 #[cfg(not(windows))]
 #[test]
-fn blg2bib_stdin_biblatex() {
+fn blg2bib_stdin_stdout_biblatex() {
     let mut child = cmd_blg2bib().stdin(Stdio::piped()).spawn().expect(
         "Failed to execute blg2bib",
     );
@@ -283,26 +323,6 @@ fn blg2bib_stdin_biblatex() {
         std::str::from_utf8(&output.stdout).unwrap(),
     ].join("\n");
     let bibtex = Bibtex::parse(bibtex_raw).expect("Valid bibtex file content");
-    let bib = bibtex.bibliographies();
-    assert_eq!(4, bib.len());
 
-    // Output could conceivably change in future, so just check that some things are right
-    assert_eq!(bib[0].entry_type(), "article");
-    assert_eq!(bib[0].citation_key(), "Guth:1980zm");
-    assert_eq!(bib[0].tags()[0], ("author".into(), "Guth, Alan H.".into()));
-    assert_eq!(bib[0].tags()[1], (
-        "title".into(),
-        "{The Inflationary Universe: A Possible Solution to the\n                        Horizon and Flatness Problems}"
-            .into(),
-    ));
-    assert_eq!(bib[0].tags()[4], ("year".into(), "1981".into()));
-
-    assert_eq!(bib[3].entry_type(), "ARTICLE");
-    assert_eq!(bib[3].citation_key(), "1982PhRvL..48.1220A");
-    assert_eq!(bib[3].tags()[1], (
-        "title".into(),
-        "{Cosmology for grand unified theories with radiatively induced symmetry breaking}"
-            .into(),
-    ));
-    assert_eq!(bib[3].tags()[4], ("year".into(), "1982".into()));
+    check_output_blg_biblatex(&bibtex);
 }
