@@ -3,6 +3,9 @@ use std::process::{Command, Stdio};
 use std::path::PathBuf;
 use std::io::Write;
 
+extern crate nom_bibtex;
+use nom_bibtex::Bibtex;
+
 fn get_bin_dir() -> PathBuf {
     env::current_exe()
         .expect("test bin's directory")
@@ -135,33 +138,30 @@ fn aux2bib_stdin_bibtex() {
     let output = child.wait_with_output().expect("Failed to wait on aux2bib");
 
     assert!(output.status.success());
-    // Output could conceivably change in future, so just check that some things are there
-    assert!(
-        std::str::from_utf8(&output.stdout).unwrap().contains(
-            "@article{Higgs:2014aqa,",
-        ) &&
-            std::str::from_utf8(&output.stdout).unwrap().contains(
-                "Higgs, Peter W.",
-            ) &&
-            std::str::from_utf8(&output.stdout).unwrap().contains(
-                "Nobel Lecture: Evading the Goldstone theorem",
-            ) &&
-            std::str::from_utf8(&output.stdout).unwrap().contains(
-                "2014",
-            )
+
+    let bibtex = Bibtex::parse(std::str::from_utf8(&output.stdout).unwrap()).unwrap();
+    let bib = bibtex.bibliographies();
+
+    // Output could conceivably change in future, so just check that some things are right
+    assert_eq!(bib[0].entry_type(), "article");
+    assert_eq!(bib[0].citation_key(), "Higgs:2014aqa");
+    assert_eq!(
+        bib[0].tags()[0],
+        ("author".into(), "Higgs, Peter W.".into())
     );
-    assert!(
-        std::str::from_utf8(&output.stdout).unwrap().contains(
-            "@article{Higgs:2015mei,",
-        ) &&
-            std::str::from_utf8(&output.stdout).unwrap().contains(
-                "Higgs, P. W.",
-            ) &&
-            std::str::from_utf8(&output.stdout).unwrap().contains(
-                "Evading the Goldstone theorem",
-            ) &&
-            std::str::from_utf8(&output.stdout).unwrap().contains(
-                "2015",
-            )
-    );
+    assert_eq!(bib[0].tags()[1], (
+        "title".into(),
+        "{Nobel Lecture: Evading the Goldstone theorem}"
+            .into(),
+    ));
+    assert_eq!(bib[0].tags()[4], ("year".into(), "2014".into()));
+
+    assert_eq!(bib[1].entry_type(), "article");
+    assert_eq!(bib[1].citation_key(), "Higgs:2015mei");
+    assert_eq!(bib[1].tags()[0], ("author".into(), "Higgs, P. W.".into()));
+    assert_eq!(bib[1].tags()[1], (
+        "title".into(),
+        "{Evading the Goldstone theorem}".into(),
+    ));
+    assert_eq!(bib[1].tags()[4], ("year".into(), "2015".into()));
 }

@@ -27,3 +27,6 @@ slog-term = "1.4.0"
 
 libinspire = "0.1.0-alpha"
 libads = "0.1.0-alpha"
+
+[dev-dependencies]
+nom-bibtex = "0.2.0"
