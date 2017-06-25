@@ -1,4 +1,7 @@
-# Inspirer [![crates.io](https://img.shields.io/crates/v/inspirer.svg)](https://crates.io/crates/inspirer) [![crates.io](https://img.shields.io/crates/l/inspirer.svg)](https://crates.io/crates/inspirer)
+# Inspirer 
+[![crates.io](https://img.shields.io/crates/v/inspirer.svg)](https://crates.io/crates/inspirer)
+[![Docs Badge](https://docs.rs/inspirer/badge.svg)](https://docs.rs/inspirer)
+[![crates.io](https://img.shields.io/crates/l/inspirer.svg)](https://crates.io/crates/inspirer)
 
 [![Travis build status](https://img.shields.io/travis/musoke/inspirer.svg)](https://travis-ci.org/musoke/inspirer/)
 [![AppVeyor build status](https://img.shields.io/appveyor/ci/musoke/inspirer.svg)](https://ci.appveyor.com/project/musoke/inspirer)
