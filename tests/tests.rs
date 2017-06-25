@@ -1,12 +1,21 @@
 use std::env;
 use std::process::{Command, Stdio};
 use std::path::PathBuf;
-use std::io::Write;
+use std::io::{Read, Write};
+use std::fs::File;
 
 extern crate nom_bibtex;
 use nom_bibtex::Bibtex;
 
 mod text;
+
+fn read_file(filename: &str) -> Vec<u8> {
+    let mut file = File::open(filename).unwrap();
+    let mut content = Vec::new();
+    file.read_to_end(&mut content).unwrap();
+
+    content
+}
 
 fn get_bin_dir() -> PathBuf {
     env::current_exe()
@@ -28,7 +37,6 @@ fn cmd_aux2bib() -> Command {
     if !path.is_file() {
         panic!("aux2bib binary {:?} was not found", path);
     }
-    println!("{:?}", path);
     let mut cmd = Command::new(path);
     cmd.env_clear().stderr(Stdio::piped()).stdout(
         Stdio::piped(),
@@ -123,10 +131,9 @@ fn aux2bib_stdin_bibtex() {
     );
 
     {
+        let input = read_file("example_files/test_bibtex.aux");
         let stdin = child.stdin.as_mut().expect("Failed to get stdin");
-        stdin.write_all(text::AUX_BIBTEX).expect(
-            "Failed to write to stdin",
-        );
+        stdin.write_all(&input).expect("Failed to write to stdin");
     }
 
     let output = child.wait_with_output().expect("Failed to wait on aux2bib");
@@ -170,10 +177,9 @@ fn aux2bib_stdin_biblatex() {
     );
 
     {
+        let input = read_file("example_files/test_biber.aux");
         let stdin = child.stdin.as_mut().expect("Failed to get stdin");
-        stdin.write_all(text::AUX_BIBLATEX).expect(
-            "Failed to write to stdin",
-        );
+        stdin.write_all(&input).expect("Failed to write to stdin");
     }
 
     let output = child.wait_with_output().expect("Failed to wait on aux2bib");
@@ -217,10 +223,9 @@ fn blg2bib_stdin_bibtex() {
     );
 
     {
+        let input = read_file("example_files/test_bibtex.blg");
         let stdin = child.stdin.as_mut().expect("Failed to get stdin");
-        stdin.write_all(text::BLG_BIBTEX).expect(
-            "Failed to write to stdin",
-        );
+        stdin.write_all(&input).expect("Failed to write to stdin");
     }
 
     let output = child.wait_with_output().expect("Failed to wait on aux2bib");
@@ -264,10 +269,9 @@ fn blg2bib_stdin_biblatex() {
     );
 
     {
+        let input = read_file("example_files/test_biber.blg");
         let stdin = child.stdin.as_mut().expect("Failed to get stdin");
-        stdin.write_all(text::BLG_BIBLATEX).expect(
-            "Failed to write to stdin",
-        );
+        stdin.write_all(&input).expect("Failed to write to stdin");
     }
 
     let output = child.wait_with_output().expect("Failed to wait on aux2bib");
