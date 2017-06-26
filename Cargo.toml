@@ -24,9 +24,13 @@ select = "0.3.0"
 slog = "1.4.1"
 slog-stdlog = "1.1.0"
 slog-term = "1.4.0"
+lazy_static = "0.2.8"
 
 libinspire = "0.1.0-alpha"
 libads = {git = "https://github.com/musoke/libads"}
 
 [dev-dependencies]
 nom-bibtex = "0.2.0"
+
+[profile.release]
+lto = true
