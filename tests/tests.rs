@@ -28,12 +28,11 @@ fn get_bin_dir() -> PathBuf {
 }
 
 fn cmd_aux2bib() -> Command {
-    let path;
-    if cfg!(not(windows)) {
-        path = get_bin_dir().join("aux2bib");
+    let path = if cfg!(not(windows)) {
+        get_bin_dir().join("aux2bib")
     } else {
-        path = get_bin_dir().join("aux2bib.exe");
-    }
+        get_bin_dir().join("aux2bib.exe")
+    };
     if !path.is_file() {
         panic!("aux2bib binary {:?} was not found", path);
     }
@@ -46,12 +45,11 @@ fn cmd_aux2bib() -> Command {
 }
 
 fn cmd_blg2bib() -> Command {
-    let path;
-    if cfg!(not(windows)) {
-        path = get_bin_dir().join("blg2bib");
+    let path = if cfg!(not(windows)) {
+        get_bin_dir().join("blg2bib")
     } else {
-        path = get_bin_dir().join("blg2bib.exe");
-    }
+        get_bin_dir().join("blg2bib.exe")
+    };
     if !path.is_file() {
         panic!("blg2bib binary {:?} was not found", path);
     }
