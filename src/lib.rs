@@ -101,7 +101,7 @@ impl Inspirer {
         let mut writer = BufWriter::new(writer);
 
         for o in output {
-            writer.write_all(&o.as_bytes()).unwrap();
+            writer.write_all(o.as_bytes()).unwrap();
         }
 
         writer.flush().unwrap();
