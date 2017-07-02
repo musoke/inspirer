@@ -226,7 +226,7 @@ impl Inspirer {
     }
 }
 
-#[derive(Debug,PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum Sources<'a> {
     Inspire(libinspire::RecID<'a>),
     Ads(libads::BibCode<'a>),
@@ -288,10 +288,12 @@ mod tests {
     fn test_aux_bibtex_1_citation() {
         let input = r"\relax
             \citation{Abramovici:1992ah}"
-                .to_string();
+            .to_string();
 
-        assert_eq!(Inspirer::init(None).aux2key(input),
-                   vec!["Abramovici:1992ah"]);
+        assert_eq!(
+            Inspirer::init(None).aux2key(input),
+            vec!["Abramovici:1992ah"]
+        );
     }
 
     #[test]
@@ -299,9 +301,11 @@ mod tests {
         let input = r"\relax
             \citation{Abramovici:1992ah}
             \citation{Thorne:1992sdb}"
-                .to_string();
+            .to_string();
 
-        assert_eq!(Inspirer::init(None).aux2key(input),
-                   vec!["Abramovici:1992ah", "Thorne:1992sdb"]);
+        assert_eq!(
+            Inspirer::init(None).aux2key(input),
+            vec!["Abramovici:1992ah", "Thorne:1992sdb"]
+        );
     }
 }

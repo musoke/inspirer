@@ -25,12 +25,16 @@ fn main() {
         .version(crate_version!())
         .author(crate_authors!(",\n"))
         .about("gets BibTeX keys from Inspire")
-        .arg(Arg::with_name("INPUT")
-                 .help("Sets the file from which to extract BibTeX keys")
-                 .index(1))
-        .arg(Arg::with_name("OUTPUT")
-                 .help("Sets the file to which results should be appended")
-                 .index(2))
+        .arg(
+            Arg::with_name("INPUT")
+                .help("Sets the file from which to extract BibTeX keys")
+                .index(1),
+        )
+        .arg(
+            Arg::with_name("OUTPUT")
+                .help("Sets the file to which results should be appended")
+                .index(2),
+        )
         .get_matches();
 
     // Get input from specified file or stdin
