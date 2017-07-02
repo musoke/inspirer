@@ -1,11 +1,14 @@
 use std::env;
 use std::process::{Command, Stdio};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::io::{Read, Write};
-use std::fs::File;
+use std::fs::{File, copy};
 
 extern crate nom_bibtex;
 use nom_bibtex::Bibtex;
+
+extern crate tempdir;
+use tempdir::TempDir;
 
 mod text;
 
@@ -323,4 +326,92 @@ fn blg2bib_stdin_stdout_biblatex() {
     let bibtex = Bibtex::parse(bibtex_raw).expect("Valid bibtex file content");
 
     check_output_blg_biblatex(&bibtex);
+}
+
+#[cfg(not(windows))]
+#[test]
+fn aux2bib_file_stdout_bibtex() {
+    let filename_in = "test_bibtex.aux";
+
+    let tmp_dir = TempDir::new("inspirer_test").expect("Failed to create tmp_dir");
+    copy(
+        Path::new("example_files").join(filename_in),
+        tmp_dir.path().join(filename_in),
+    ).expect("Failed to copy test input");
+
+    let child = cmd_aux2bib()
+        .current_dir(tmp_dir.path())
+        .arg(filename_in)
+        .stdin(Stdio::piped())
+        .spawn()
+        .expect("Failed to execute aux2bib");
+
+    let output = child.wait_with_output().expect("Failed to wait on aux2bib");
+
+    assert!(output.status.success());
+
+    let bibtex = Bibtex::parse(std::str::from_utf8(&output.stdout).unwrap())
+        .expect("Valid bibtex file content");
+
+    check_output_aux_bibtex(&bibtex);
+}
+
+#[cfg(not(windows))]
+#[test]
+// Test for panic when the input file does not exist
+fn aux2bib_file_stdout_bibtex_input_no_exist() {
+    let filename_in = "test_bibtex.aux";
+
+    let tmp_dir = TempDir::new("inspirer_test").expect("Failed to create tmp_dir");
+
+    let child = cmd_aux2bib()
+        .current_dir(tmp_dir.path())
+        .arg(filename_in)
+        .stdin(Stdio::piped())
+        .spawn()
+        .expect("Failed to execute aux2bib");
+
+    let output = child.wait_with_output().expect("Failed to wait on aux2bib");
+
+    assert!(output.status.success());
+    // Check that there is nothing written to stdout
+    assert_eq!(output.stdout, []);
+}
+
+#[cfg(not(windows))]
+#[test]
+fn aux2bib_file_file_bibtex() {
+    let filename_in = "test_bibtex.aux";
+    let filename_out = "autobib.bib";
+
+    let tmp_dir = TempDir::new("inspirer_test").expect("Failed to create tmp_dir");
+    copy(
+        Path::new("example_files").join(filename_in),
+        tmp_dir.path().join(filename_in),
+    ).expect("Failed to copy test input");
+
+    let child = cmd_aux2bib()
+        .current_dir(tmp_dir.path())
+        .arg(filename_in)
+        .arg(filename_out)
+        .stdin(Stdio::piped())
+        .spawn()
+        .expect("Failed to execute aux2bib");
+
+    let output = child.wait_with_output().expect("Failed to wait on aux2bib");
+    assert!(output.status.success());
+    // Check that there is nothing written to stdout
+    assert_eq!(output.stdout, []);
+
+    let mut output = Vec::new();
+    let mut output_file = File::open(tmp_dir.path().join(filename_out))
+        .expect("Output file not written");
+    output_file
+        .read_to_end(&mut output)
+        .expect("Failed to read output file");
+
+    let bibtex = Bibtex::parse(std::str::from_utf8(&output).unwrap())
+        .expect("Valid bibtex file content");
+
+    check_output_aux_bibtex(&bibtex);
 }

@@ -1,36 +1,48 @@
 [package]
-name = "inspirer"
 authors = ["Nathan Musoke <nathan.musoke@gmail.com>"]
-version = "0.1.0-beta"
-publish = false
-description = "For working with LaTeX, inspirehep.net, and BibTeX/BibLaTeX"
-
-repository = "https://github.com/musoke/inspirer"
-readme = "README.md"
-
-keywords = ["latex", "bibtex", "physics", "inspire", "inspirehep"]
 categories = ["command-line-utilities", "science"]
+description = "For working with LaTeX, inspirehep.net, and BibTeX/BibLaTeX"
+keywords = ["latex", "bibtex", "physics", "inspire", "inspirehep"]
 license = "Apache-2.0"
+name = "inspirer"
+publish = false
+readme = "README.md"
+repository = "https://github.com/musoke/inspirer"
+version = "0.1.0-beta"
 
 [badges]
-travis-ci = { repository = "musoke/inspirer", branch = "master" }
-appveyor  = { repository = "musoke/inspirer", branch = "master", service = "github" }
-gitlab    = { repository = "musoke/inspirer", branch = "master" }
+
+[badges.appveyor]
+branch = "master"
+repository = "musoke/inspirer"
+service = "github"
+
+[badges.gitlab]
+branch = "master"
+repository = "musoke/inspirer"
+
+[badges.travis-ci]
+branch = "master"
+repository = "musoke/inspirer"
 
 [dependencies]
 clap = "2.20.0"
+lazy_static = "0.2.8"
+libinspire = "0.1.0-alpha"
 regex = "0.2"
 select = "0.3.0"
 slog = "1.4.1"
 slog-stdlog = "1.1.0"
 slog-term = "1.4.0"
-lazy_static = "0.2.8"
 
-libinspire = "0.1.0-alpha"
-libads = {git = "https://github.com/musoke/libads"}
+[dependencies.libads]
+git = "https://github.com/musoke/libads"
 
 [dev-dependencies]
 nom-bibtex = "0.2.0"
+tempdir = "0.3.5"
+
+[profile]
 
 [profile.release]
 lto = true
