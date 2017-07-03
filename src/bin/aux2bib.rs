@@ -1,7 +1,7 @@
 #[macro_use(crate_version, crate_authors)]
 extern crate clap;
 extern crate inspirer;
-extern crate libinspire;
+use inspirer::errors::*;
 
 #[macro_use]
 extern crate slog;
@@ -11,7 +11,10 @@ use slog::DrainExt;
 use clap::{App, Arg};
 
 fn main() {
+    run().expect("Crashed");
+}
 
+fn run() -> Result<()> {
     // Initialize logging
     let drain = slog_term::streamer().stderr().build().fuse();
     let root_logger = slog::Logger::root(drain, o!("version" => crate_version!()));
@@ -58,4 +61,6 @@ fn main() {
     lib.put_output(matches.value_of("OUTPUT"), bibtex_entries);
 
     info!(root_logger, "Done");
+
+    Ok(())
 }
