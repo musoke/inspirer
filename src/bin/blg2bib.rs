@@ -11,13 +11,14 @@ use slog::DrainExt;
 use clap::{App, Arg};
 
 fn main() {
-    run().expect("Crashed");
-}
-
-fn run() -> Result<()> {
     // Initialize logging
     let drain = slog_term::streamer().stderr().build().fuse();
     let root_logger = slog::Logger::root(drain, o!("version" => crate_version!()));
+
+    run(&root_logger).expect("Crashed");
+}
+
+fn run(root_logger: &slog::Logger) -> Result<()> {
     info!(root_logger, "Application started");
 
     // Initialize instance of InspirerLib
