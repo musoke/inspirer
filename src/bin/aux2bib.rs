@@ -1,6 +1,7 @@
 #[macro_use(crate_version, crate_authors)]
 extern crate clap;
 extern crate inspirer;
+
 use inspirer::errors::*;
 
 #[macro_use]
@@ -15,7 +16,13 @@ fn main() {
     let drain = slog_term::streamer().stderr().build().fuse();
     let root_logger = slog::Logger::root(drain, o!("version" => crate_version!()));
 
-    run(&root_logger).expect("Crashed");
+    if let Err(ref e) = run(&root_logger) {
+
+        match e {
+            _ => error!(root_logger, "File not found"; "error" => e.description()),
+        }
+        ::std::process::exit(1);
+    }
 }
 
 fn run(root_logger: &slog::Logger) -> Result<()> {

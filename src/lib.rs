@@ -79,7 +79,8 @@ impl Inspirer {
             Some(file_name) => {
                 info!(self.logger, "Reading from file";
                       "file_name" => file_name);
-                input_file = File::open(file_name).chain_err(|| "File not found")?;
+                input_file = File::open(file_name)
+                    .chain_err(|| format!("File \"{}\" not found", file_name))?;
                 &mut input_file
             }
             None => {
