@@ -42,7 +42,7 @@ fn run(root_logger: &slog::Logger) -> Result<()> {
         .get_matches();
 
     // Get input from specified file or stdin
-    let input_data = lib.get_input(matches.value_of("INPUT"));
+    let input_data = lib.get_input(matches.value_of("INPUT"))?;
 
     // Extract BibTeX tags from document
     let keys = lib.aux2key(input_data);

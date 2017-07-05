@@ -8,7 +8,11 @@ extern crate error_chain;
 // `error_chain!` creates.
 pub mod errors {
     // Create the Error, ErrorKind, ResultExt, and Result types
-    error_chain!{}
+    error_chain!{
+        foreign_links {
+            Io(::std::io::Error) #[cfg(unix)];
+        }
+    }
 }
 use errors::*;
 
@@ -65,7 +69,7 @@ impl Inspirer {
     /// # Examples
     /// ```
     /// ```
-    pub fn get_input(&self, input_source: Option<&str>) -> String {
+    pub fn get_input(&self, input_source: Option<&str>) -> Result<String> {
         let mut input_data = String::new();
 
         let mut input_file: File;
@@ -75,7 +79,7 @@ impl Inspirer {
             Some(file_name) => {
                 info!(self.logger, "Reading from file";
                       "file_name" => file_name);
-                input_file = File::open(file_name).expect("File not found");
+                input_file = File::open(file_name).chain_err(|| "File not found")?;
                 &mut input_file
             }
             None => {
@@ -84,9 +88,11 @@ impl Inspirer {
             }
         };
         let mut reader = BufReader::new(reader);
-        reader.read_to_string(&mut input_data).unwrap();
+        reader
+            .read_to_string(&mut input_data)
+            .chain_err(|| "Could not read input")?;
 
-        input_data
+        Ok(input_data)
     }
 
     /// Write output to file or stdout
