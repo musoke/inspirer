@@ -66,7 +66,7 @@ fn run(root_logger: &slog::Logger) -> Result<()> {
     }
 
     // Write BibTeX entries to file or stdout
-    lib.put_output(matches.value_of("OUTPUT"), bibtex_entries);
+    lib.put_output(matches.value_of("OUTPUT"), bibtex_entries)?;
 
     info!(root_logger, "Done");
 

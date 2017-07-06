@@ -97,7 +97,7 @@ impl Inspirer {
     }
 
     /// Write output to file or stdout
-    pub fn put_output(&self, output_dest: Option<&str>, output: Vec<String>) {
+    pub fn put_output(&self, output_dest: Option<&str>, output: Vec<String>) -> Result<()> {
         let mut stdout = std::io::stdout();
         let mut output_file: std::fs::File;
 
@@ -109,7 +109,7 @@ impl Inspirer {
                     .append(true)
                     .create(true)
                     .open(file_name)
-                    .unwrap();
+                    .chain_err(|| format!("Could not open file \"{}\" to write", file_name))?;
                 &mut output_file
             }
             None => {
@@ -122,10 +122,14 @@ impl Inspirer {
         let mut writer = BufWriter::new(writer);
 
         for o in output {
-            writer.write_all(o.as_bytes()).unwrap();
+            writer
+                .write_all(o.as_bytes())
+                .chain_err(|| "Failed to write output")?;
         }
 
-        writer.flush().unwrap();
+        writer.flush().chain_err(|| "Failed to write output")?;
+
+        Ok(())
     }
 
     /// The `aux2key` function extracts TeX keys from LaTeX .aux files. These can be for either
