@@ -181,7 +181,7 @@ impl Inspirer {
         lazy_static! {
             // TODO: check on the exact characters allowed in keys
             static ref AUX_REGEX: Regex = Regex::new(
-                r"(\\citation|\\abx@aux@cite)\{(.+)\}").unwrap();
+                r"(\\citation|\\abx@aux@cite)\{(.+)\}").expect("aux regex compiled during development");
         }
 
         AUX_REGEX
@@ -219,7 +219,7 @@ impl Inspirer {
         lazy_static! {
             static ref BLG_REGEX: Regex = Regex::new(
                 r#"(Warning--|WARN - )I didn't find a database entry for ["'](.+)["']"#,
-            ).unwrap();
+            ).expect("blg regex compiled during development");
         }
 
         BLG_REGEX
