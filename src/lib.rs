@@ -1,3 +1,21 @@
+// `error_chain!` can recurse deeply
+#![recursion_limit = "1024"]
+#[macro_use]
+extern crate error_chain;
+
+// We'll put our errors in an `errors` module, and other modules in
+// this crate will `use errors::*;` to get access to everything
+// `error_chain!` creates.
+pub mod errors {
+    // Create the Error, ErrorKind, ResultExt, and Result types
+    error_chain!{
+        foreign_links {
+            Io(::std::io::Error) #[cfg(unix)];
+        }
+    }
+}
+use errors::*;
+
 extern crate libinspire;
 extern crate libads;
 
@@ -51,7 +69,7 @@ impl Inspirer {
     /// # Examples
     /// ```
     /// ```
-    pub fn get_input(&self, input_source: Option<&str>) -> String {
+    pub fn get_input(&self, input_source: Option<&str>) -> Result<String> {
         let mut input_data = String::new();
 
         let mut input_file: File;
@@ -61,7 +79,8 @@ impl Inspirer {
             Some(file_name) => {
                 info!(self.logger, "Reading from file";
                       "file_name" => file_name);
-                input_file = File::open(file_name).expect("File not found");
+                input_file = File::open(file_name)
+                    .chain_err(|| format!("File \"{}\" not found", file_name))?;
                 &mut input_file
             }
             None => {
@@ -70,13 +89,15 @@ impl Inspirer {
             }
         };
         let mut reader = BufReader::new(reader);
-        reader.read_to_string(&mut input_data).unwrap();
+        reader
+            .read_to_string(&mut input_data)
+            .chain_err(|| "Could not read input")?;
 
-        input_data
+        Ok(input_data)
     }
 
     /// Write output to file or stdout
-    pub fn put_output(&self, output_dest: Option<&str>, output: Vec<String>) {
+    pub fn put_output(&self, output_dest: Option<&str>, output: Vec<String>) -> Result<()> {
         let mut stdout = std::io::stdout();
         let mut output_file: std::fs::File;
 
@@ -88,7 +109,7 @@ impl Inspirer {
                     .append(true)
                     .create(true)
                     .open(file_name)
-                    .unwrap();
+                    .chain_err(|| format!("Could not open file \"{}\" to write", file_name))?;
                 &mut output_file
             }
             None => {
@@ -101,10 +122,14 @@ impl Inspirer {
         let mut writer = BufWriter::new(writer);
 
         for o in output {
-            writer.write_all(o.as_bytes()).unwrap();
+            writer
+                .write_all(o.as_bytes())
+                .chain_err(|| "Failed to write output")?;
         }
 
-        writer.flush().unwrap();
+        writer.flush().chain_err(|| "Failed to write output")?;
+
+        Ok(())
     }
 
     /// The `aux2key` function extracts TeX keys from LaTeX .aux files. These can be for either
@@ -156,7 +181,7 @@ impl Inspirer {
         lazy_static! {
             // TODO: check on the exact characters allowed in keys
             static ref AUX_REGEX: Regex = Regex::new(
-                r"(\\citation|\\abx@aux@cite)\{(.+)\}").unwrap();
+                r"(\\citation|\\abx@aux@cite)\{(.+)\}").expect("aux regex compiled during development");
         }
 
         AUX_REGEX
@@ -194,7 +219,7 @@ impl Inspirer {
         lazy_static! {
             static ref BLG_REGEX: Regex = Regex::new(
                 r#"(Warning--|WARN - )I didn't find a database entry for ["'](.+)["']"#,
-            ).unwrap();
+            ).expect("blg regex compiled during development");
         }
 
         BLG_REGEX

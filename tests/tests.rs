@@ -391,7 +391,7 @@ fn aux2bib_file_stdout_bibtex_input_no_exist() {
 
     let output = child.wait_with_output().expect("Failed to wait on aux2bib");
 
-    assert!(output.status.success());
+    assert_eq!(output.status.code().expect("Process exited"), 1);
     // Check that there is nothing written to stdout
     assert_eq!(output.stdout, []);
 }

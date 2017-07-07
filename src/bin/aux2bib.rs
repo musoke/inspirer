@@ -1,7 +1,8 @@
 #[macro_use(crate_version, crate_authors)]
 extern crate clap;
 extern crate inspirer;
-extern crate libinspire;
+
+use inspirer::errors::*;
 
 #[macro_use]
 extern crate slog;
@@ -11,10 +12,20 @@ use slog::DrainExt;
 use clap::{App, Arg};
 
 fn main() {
-
     // Initialize logging
     let drain = slog_term::streamer().stderr().build().fuse();
     let root_logger = slog::Logger::root(drain, o!("version" => crate_version!()));
+
+    if let Err(ref e) = run(&root_logger) {
+
+        match e {
+            _ => error!(root_logger, "File not found"; "error" => e.description()),
+        }
+        ::std::process::exit(1);
+    }
+}
+
+fn run(root_logger: &slog::Logger) -> Result<()> {
     info!(root_logger, "Application started");
 
     // Initialize instance of InspirerLib
@@ -38,7 +49,7 @@ fn main() {
         .get_matches();
 
     // Get input from specified file or stdin
-    let input_data = lib.get_input(matches.value_of("INPUT"));
+    let input_data = lib.get_input(matches.value_of("INPUT"))?;
 
     // Extract BibTeX tags from document
     let keys = lib.aux2key(input_data);
@@ -55,7 +66,9 @@ fn main() {
     }
 
     // Write BibTeX entries to file or stdout
-    lib.put_output(matches.value_of("OUTPUT"), bibtex_entries);
+    lib.put_output(matches.value_of("OUTPUT"), bibtex_entries)?;
 
     info!(root_logger, "Done");
+
+    Ok(())
 }
