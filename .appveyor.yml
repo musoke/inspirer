@@ -83,7 +83,7 @@ branches:
     # Release tags
     - /^v\d+\.\d+\.\d+.*$/
     - master
-    - /^ci\/*$/
+    - /^ci\/.*$/
 
 notifications:
   - provider: Email

@@ -102,7 +102,7 @@ branches:
     # release tags
     - /^v\d+\.\d+\.\d+.*$/
     - master
-    - /^ci\/*$/
+    - /^ci\/.*$/
 
 notifications:
   email:
