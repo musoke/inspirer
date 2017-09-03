@@ -29,7 +29,6 @@ repository = "musoke/inspirer"
 clap = "2.20.0"
 error-chain = "0.10.0"
 lazy_static = "0.2.8"
-libinspire = "0.1.0-alpha"
 regex = "0.2"
 select = "0.3.0"
 slog = "1.4.1"
@@ -38,6 +37,10 @@ slog-term = "1.4.0"
 
 [dependencies.libads]
 git = "https://github.com/musoke/libads"
+
+[dependencies.libinspire]
+git = "https://github.com/musoke/libinspire"
+branch = "no-https"
 
 [dev-dependencies]
 nom-bibtex = "0.2.0"
