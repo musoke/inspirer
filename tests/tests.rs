@@ -2,7 +2,7 @@ use std::env;
 use std::process::{Command, Stdio};
 use std::path::{Path, PathBuf};
 use std::io::{Read, Write};
-use std::fs::{File, copy};
+use std::fs::{copy, File};
 
 extern crate nom_bibtex;
 use nom_bibtex::Bibtex;
@@ -183,27 +183,29 @@ fn check_output_blg_biblatex(bibtex: &Bibtex) {
 #[cfg(not(windows))]
 #[test]
 fn aux2bib_runs() {
-    let mut cmd = cmd_aux2bib()
+    let mut child = cmd_aux2bib()
         .arg("--help")
         .spawn()
         .expect("Failed to execute aux2bib");
 
-    let error_code = cmd.wait().expect("Failed to wait on aux2bib");
+    let output = child.wait_with_output().expect("Failed to wait on aux2bib");
 
-    assert!(error_code.success());
+    println!("{:?}", output);
+    assert!(output.status.success());
 }
 
 #[cfg(not(windows))]
 #[test]
 fn blg2bib_runs() {
-    let mut cmd = cmd_blg2bib()
+    let mut child = cmd_blg2bib()
         .arg("--help")
         .spawn()
         .expect("Failed to execute blg2bib");
 
-    let error_code = cmd.wait().expect("Failed to wait on blg2bib");
+    let output = child.wait_with_output().expect("Failed to wait on aux2bib");
 
-    assert!(error_code.success());
+    println!("{:?}", output);
+    assert!(output.status.success());
 }
 
 #[cfg(not(windows))]
@@ -221,6 +223,7 @@ fn aux2bib_stdin_stdout_empty() {
 
     let output = child.wait_with_output().expect("Failed to wait on aux2bib");
 
+    println!("{:?}", output);
     assert!(output.status.success());
     assert_eq!(output.stdout, []);
 }
@@ -240,6 +243,7 @@ fn blg2bib_stdin_stdout_empty() {
 
     let output = child.wait_with_output().expect("Failed to wait on aux2bib");
 
+    println!("{:?}", output);
     assert!(output.status.success());
     assert_eq!(output.stdout, []);
 }
@@ -260,6 +264,7 @@ fn aux2bib_stdin_stdout_bibtex() {
 
     let output = child.wait_with_output().expect("Failed to wait on aux2bib");
 
+    println!("{:?}", output);
     assert!(output.status.success());
 
     let bibtex = Bibtex::parse(std::str::from_utf8(&output.stdout).unwrap())
@@ -284,6 +289,7 @@ fn aux2bib_stdin_stdout_biblatex() {
 
     let output = child.wait_with_output().expect("Failed to wait on aux2bib");
 
+    println!("{:?}", output);
     assert!(output.status.success());
 
     let bibtex_raw = &[
@@ -311,6 +317,7 @@ fn blg2bib_stdin_stdout_bibtex() {
 
     let output = child.wait_with_output().expect("Failed to wait on aux2bib");
 
+    println!("{:?}", output);
     assert!(output.status.success());
 
     let bibtex = Bibtex::parse(std::str::from_utf8(&output.stdout).unwrap())
@@ -335,6 +342,7 @@ fn blg2bib_stdin_stdout_biblatex() {
 
     let output = child.wait_with_output().expect("Failed to wait on aux2bib");
 
+    println!("{:?}", output);
     assert!(output.status.success());
 
     let bibtex_raw = &[
@@ -366,6 +374,7 @@ fn aux2bib_file_stdout_bibtex() {
 
     let output = child.wait_with_output().expect("Failed to wait on aux2bib");
 
+    println!("{:?}", output);
     assert!(output.status.success());
 
     let bibtex = Bibtex::parse(std::str::from_utf8(&output.stdout).unwrap())
@@ -391,6 +400,7 @@ fn aux2bib_file_stdout_bibtex_input_no_exist() {
 
     let output = child.wait_with_output().expect("Failed to wait on aux2bib");
 
+    println!("{:?}", output);
     assert_eq!(output.status.code().expect("Process exited"), 1);
     // Check that there is nothing written to stdout
     assert_eq!(output.stdout, []);
@@ -417,19 +427,20 @@ fn aux2bib_file_file_bibtex() {
         .expect("Failed to execute aux2bib");
 
     let output = child.wait_with_output().expect("Failed to wait on aux2bib");
+    println!("{:?}", output);
     assert!(output.status.success());
     // Check that there is nothing written to stdout
     assert_eq!(output.stdout, []);
 
     let mut output = Vec::new();
-    let mut output_file = File::open(tmp_dir.path().join(filename_out))
-        .expect("Output file not written");
+    let mut output_file =
+        File::open(tmp_dir.path().join(filename_out)).expect("Output file not written");
     output_file
         .read_to_end(&mut output)
         .expect("Failed to read output file");
 
-    let bibtex = Bibtex::parse(std::str::from_utf8(&output).unwrap())
-        .expect("Valid bibtex file content");
+    let bibtex =
+        Bibtex::parse(std::str::from_utf8(&output).unwrap()).expect("Valid bibtex file content");
 
     check_output_aux_bibtex(&bibtex);
 }
