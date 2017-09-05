@@ -154,27 +154,24 @@ fn check_output_blg_biblatex(bibtex: &Bibtex) {
     assert_eq!(4, bib.len());
 
     // Output could conceivably change in future, so just check that some things are right
-    assert_eq!(bib[0].entry_type(), "article");
-    assert_eq!(bib[0].citation_key(), "Guth:1980zm");
-    assert_eq!(bib[0].tags()[0], ("author".into(), "Guth, Alan H.".into()));
-    assert_eq!(bib[0].tags()[1], (
+    assert_eq!(bib[2].entry_type(), "article");
+    assert_eq!(bib[2].citation_key(), "Guth:1980zm");
+    assert_eq!(bib[2].tags()[0], ("author".into(), "Guth, Alan H.".into()));
+    assert_eq!(bib[2].tags()[1], (
         "title".into(),
         "{The Inflationary Universe: A Possible Solution to the\n                        Horizon and Flatness Problems}"
             .into(),
     ));
-    assert_eq!(bib[0].tags()[4], ("year".into(), "1981".into()));
+    assert_eq!(bib[2].tags()[4], ("year".into(), "1981".into()));
 
-    assert_eq!(bib[3].entry_type(), "ARTICLE");
-    assert_eq!(bib[3].citation_key(), "1982PhRvL..48.1220A");
-    assert_eq!(
-        bib[3].tags()[1],
-        (
-            "title".into(),
-            "{Cosmology for grand unified theories with radiatively induced symmetry breaking}"
-                .into(),
-        )
-    );
-    assert_eq!(bib[3].tags()[4], ("year".into(), "1982".into()));
+    assert_eq!(bib[0].entry_type(), "ARTICLE");
+    assert_eq!(bib[0].citation_key(), "1982PhRvL..48.1220A");
+    assert_eq!(bib[0].tags()[1], (
+        "title".into(),
+        "{Cosmology for grand unified theories with radiatively induced symmetry breaking}"
+            .into(),
+    ));
+    assert_eq!(bib[0].tags()[4], ("year".into(), "1982".into()));
 }
 
 #[cfg(not(windows))]

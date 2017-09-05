@@ -242,11 +242,16 @@ impl Inspirer {
             ).expect("blg regex compiled during development");
         }
 
-        BLG_REGEX
+        let mut matches: Vec<String> = BLG_REGEX
             .captures_iter(&input_data)
             .map(|c| c.get(2).unwrap().as_str().to_string())
             // TODO just return the iterator: makes more sense with rayon
-            .collect()
+            .collect();
+
+        matches.sort_unstable();
+        matches.dedup();
+
+        matches
     }
 
     /// Fetch BibTeX entries
@@ -406,4 +411,5 @@ mod tests {
         );
     }
 
+    // TODO Similar tests on blg2key
 }
