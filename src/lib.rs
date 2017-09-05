@@ -180,14 +180,26 @@ impl Inspirer {
 
         lazy_static! {
             // TODO: check on the exact characters allowed in keys
+            // Just find groups of keys which are cited together
             static ref AUX_REGEX: Regex = Regex::new(
-                r"(\\citation|\\abx@aux@cite)\{(.+)\}").expect("aux regex compiled during development");
+                r"(?:\\citation|\\abx@aux@cite)\{(?P<key>.+)\}").expect("aux regex compiled during development");
+        }
+
+        lazy_static! {
+            // TODO: check on the exact characters allowed in keys
+            // Split keys which are cited together
+            static ref INNER_REGEX: Regex = Regex::new(
+                r"(?P<key>[^,]+),?").expect("aux regex compiled during development");
         }
 
         AUX_REGEX
             .captures_iter(&input_data)
-            .map(|c| c.get(2).unwrap().as_str().to_string())
-            // TODO just return the iterator: makes more sense with rayon
+            .map(|c| c["key"].to_string())
+            .collect::<Vec<String>>()
+            .iter()
+            .flat_map(|s| {
+                INNER_REGEX.captures_iter(s).map(|c| c["key"].to_string())
+            })
             .collect()
     }
 
@@ -331,6 +343,44 @@ mod tests {
         assert_eq!(
             Inspirer::init(None).aux2key(input),
             vec!["Abramovici:1992ah", "Thorne:1992sdb"]
+        );
+    }
+
+    #[test]
+    fn test_aux_bibtex_2_citation_together() {
+        let input = r"\relax
+            \citation{Abramovici:1992ah,Thorne:1992sdb}"
+            .to_string();
+
+        assert_eq!(
+            Inspirer::init(None).aux2key(input),
+            vec!["Abramovici:1992ah", "Thorne:1992sdb"]
+        );
+    }
+
+    #[test]
+    fn test_aux_bibtex_3_citation() {
+        let input = r"\relax
+            \citation{Abramovici:1992ah}
+            \citation{Thorne:1992sdb}
+            \citation{Thorne:1992sdb}"
+            .to_string();
+
+        assert_eq!(
+            Inspirer::init(None).aux2key(input),
+            vec!["Abramovici:1992ah", "Thorne:1992sdb", "Thorne:1992sdb"]
+        );
+    }
+
+    #[test]
+    fn test_aux_bibtex_3_citation_together() {
+        let input = r"\relax
+            \citation{Abramovici:1992ah,Thorne:1992sdb,Bildsten:1992my}"
+            .to_string();
+
+        assert_eq!(
+            Inspirer::init(None).aux2key(input),
+            vec!["Abramovici:1992ah", "Thorne:1992sdb", "Bildsten:1992my"]
         );
     }
 }
