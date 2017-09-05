@@ -177,7 +177,7 @@ fn check_output_blg_biblatex(bibtex: &Bibtex) {
 #[cfg(not(windows))]
 #[test]
 fn aux2bib_runs() {
-    let mut child = cmd_aux2bib()
+    let child = cmd_aux2bib()
         .arg("--help")
         .spawn()
         .expect("Failed to execute aux2bib");
@@ -191,7 +191,7 @@ fn aux2bib_runs() {
 #[cfg(not(windows))]
 #[test]
 fn blg2bib_runs() {
-    let mut child = cmd_blg2bib()
+    let child = cmd_blg2bib()
         .arg("--help")
         .spawn()
         .expect("Failed to execute blg2bib");
