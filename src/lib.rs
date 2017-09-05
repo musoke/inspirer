@@ -192,7 +192,7 @@ impl Inspirer {
                 r"(?P<key>[^,]+),?").expect("aux regex compiled during development");
         }
 
-        AUX_REGEX
+        let mut matches: Vec<String> = AUX_REGEX
             .captures_iter(&input_data)
             .map(|c| c["key"].to_string())
             .collect::<Vec<String>>()
@@ -200,7 +200,15 @@ impl Inspirer {
             .flat_map(|s| {
                 INNER_REGEX.captures_iter(s).map(|c| c["key"].to_string())
             })
-            .collect()
+            // TODO just return the iterator: wait for impl trait
+            .collect();
+
+        // Deduplicate keys
+        // As a bonus, keys are sorted alphabetically
+        matches.sort_unstable();
+        matches.dedup();
+
+        matches
     }
 
     /// The blg2key function extracts missing references from bibtex logs
@@ -363,12 +371,12 @@ mod tests {
         let input = r"\relax
             \citation{Abramovici:1992ah}
             \citation{Thorne:1992sdb}
-            \citation{Thorne:1992sdb}"
+            \citation{Bildsten:1992my}"
             .to_string();
 
         assert_eq!(
             Inspirer::init(None).aux2key(input),
-            vec!["Abramovici:1992ah", "Thorne:1992sdb", "Thorne:1992sdb"]
+            vec!["Abramovici:1992ah", "Bildsten:1992my", "Thorne:1992sdb"]
         );
     }
 
@@ -380,7 +388,22 @@ mod tests {
 
         assert_eq!(
             Inspirer::init(None).aux2key(input),
-            vec!["Abramovici:1992ah", "Thorne:1992sdb", "Bildsten:1992my"]
+            vec!["Abramovici:1992ah", "Bildsten:1992my", "Thorne:1992sdb"]
         );
     }
+
+    #[test]
+    fn test_aux_bibtex_3_citation_duplicate() {
+        let input = r"\relax
+            \citation{Thorne:1992sdb}
+            \citation{Abramovici:1992ah}
+            \citation{Thorne:1992sdb}"
+            .to_string();
+
+        assert_eq!(
+            Inspirer::init(None).aux2key(input),
+            vec!["Abramovici:1992ah", "Thorne:1992sdb"]
+        );
+    }
+
 }
