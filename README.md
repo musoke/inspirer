@@ -19,6 +19,19 @@ ability to fetch BibTeX entries from
 
 ## Installation
 
+### snap
+
+This will be available as a snap.
+
+Ubuntu 16.10+:
+```
+apt install snapd
+snap install inspirer
+
+snap run inspirer.aux2bib file.aux
+snap run inspirer.blg2bib file.blg
+```
+
 ### From pre-compiled binaries
 
 TBD
@@ -82,7 +95,7 @@ cargo run --bin blg2bib example_files/test_biber.blg
   - not yet parallelized
   - overly verbose logging
   - 7 MB binaries
-  - binaries are distributed yet
+  - binaries are not distributed yet
   - too many `.unwrap()`s
   - haven't yet tried fuzzing
 
