@@ -1,4 +1,4 @@
-# Inspirer 
+# Inspirer
 [![crates.io](https://img.shields.io/crates/v/inspirer.svg)](https://crates.io/crates/inspirer)
 [![Docs Badge](https://docs.rs/inspirer/badge.svg)](https://docs.rs/inspirer)
 [![crates.io](https://img.shields.io/crates/l/inspirer.svg)](https://crates.io/crates/inspirer)
@@ -21,7 +21,7 @@ ability to fetch BibTeX entries from
 
 ### snap
 
-inspirer is be available as a [snap](https://snapcraft.io/).
+inspirer is available as a [snap](https://snapcraft.io/).
 This may be the easiest way to install inspirer and keep it updated.
 
 Ubuntu 16.10+:
@@ -52,7 +52,9 @@ snap refresh inspirer --edge
 
 ### From pre-compiled binaries
 
-TBD
+Binaries will be available to download from the [GitHub release
+page](https://github.com/musoke/inspirer/releases).
+This would require manual updating.
 
 ### From source
 
@@ -69,10 +71,9 @@ cargo install --git https://github.com/musoke/inspirer
 cargo install --git https://gitlab.com/musoke/inspirer
 ```
 
-I haven't really tested with Windows, but do have tests on
+I haven't really tested with Windows, but do have minimal tests on
 [Appveyor](https://ci.appveyor.com/project/musoke/inspirer) which seem to pass
 sometimes.
-
 [![AppVeyor build status](https://img.shields.io/appveyor/ci/musoke/inspirer.svg)](https://ci.appveyor.com/project/musoke/inspirer)
 
 
@@ -113,9 +114,7 @@ cargo run --bin blg2bib example_files/test_biber.blg
   - not yet parallelized
   - overly verbose logging
   - 7 MB binaries
-  - binaries are not distributed yet
-  - too many `.unwrap()`s
-  - haven't yet tried fuzzing
+  - haven't tried fuzzing
 
 
 ## Licence
