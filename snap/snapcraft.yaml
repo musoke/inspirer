@@ -12,8 +12,8 @@ apps:
   aux2bib:
     command: bin/aux2bib
     plugs:
-      - home
       - network
+      - home
   blg2bib:
     command: bin/blg2bib
     plugs:
