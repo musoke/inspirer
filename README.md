@@ -19,6 +19,37 @@ ability to fetch BibTeX entries from
 
 ## Installation
 
+### snap
+
+inspirer is be available as a [snap](https://snapcraft.io/).
+This may be the easiest way to install inspirer and keep it updated.
+
+Ubuntu 16.10+:
+```
+apt install snapd
+snap install inspirer
+```
+
+Then you can run the binaries:
+```
+inspirer.aux2bib file.aux
+inspirer.blg2bib file.blg
+```
+
+For convenience, you may wish to create shorter aliases.
+For example,
+```
+snap alias inspirer.aux2bib aux2bib.
+```
+allows one to simply run `aux2bib` instead of `inspirer.aux2bib`.
+
+The snap should be updated daily by automatic builds [on
+Launchpad](https://code.launchpad.net/~musoke/+snap/inspirer).
+Enable the `edge` channel to get the latest, possibly less tested builds:
+```
+snap refresh inspirer --edge
+```
+
 ### From pre-compiled binaries
 
 TBD
@@ -82,7 +113,7 @@ cargo run --bin blg2bib example_files/test_biber.blg
   - not yet parallelized
   - overly verbose logging
   - 7 MB binaries
-  - binaries are distributed yet
+  - binaries are not distributed yet
   - too many `.unwrap()`s
   - haven't yet tried fuzzing
 
