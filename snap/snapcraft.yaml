@@ -24,3 +24,6 @@ parts:
   bins:
     plugin: rust
     rust-channel: stable
+    stage-packages:
+      - pkg-config
+      - libssl-dev
