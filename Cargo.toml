@@ -36,11 +36,13 @@ slog-stdlog = "1.1.0"
 slog-term = "1.4.0"
 
 [dependencies.libads]
-git = "https://github.com/musoke/libads"
+# git = "https://github.com/musoke/libads"
+version = "0.1.0-beta"
 
 [dependencies.libinspire]
-git = "https://github.com/musoke/libinspire"
-branch = "no-https"
+# git = "https://github.com/musoke/libinspire"
+# branch = "no-https"
+version = "0.1.0-beta-no-https"
 
 [dev-dependencies]
 nom-bibtex = "0.2.0"
