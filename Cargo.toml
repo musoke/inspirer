@@ -8,7 +8,7 @@ name = "inspirer"
 publish = true
 readme = "README.md"
 repository = "https://github.com/musoke/inspirer"
-version = "0.1.0-beta"
+version = "0.1.0"
 
 [badges]
 
