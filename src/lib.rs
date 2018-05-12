@@ -200,7 +200,6 @@ impl Inspirer {
             .flat_map(|s| {
                 INNER_REGEX.captures_iter(s).map(|c| c["key"].to_string())
             })
-            // TODO just return the iterator: wait for impl trait
             .collect();
 
         // Deduplicate keys
@@ -245,7 +244,6 @@ impl Inspirer {
         let mut matches: Vec<String> = BLG_REGEX
             .captures_iter(&input_data)
             .map(|c| c.get(2).unwrap().as_str().to_string())
-            // TODO just return the iterator: makes more sense with rayon
             .collect();
 
         matches.sort_unstable();
