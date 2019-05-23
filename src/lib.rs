@@ -14,7 +14,7 @@ pub mod errors {
         }
     }
 }
-use errors::*;
+use crate::errors::*;
 
 extern crate libinspire;
 extern crate libads;
