@@ -16,21 +16,21 @@ pub mod errors {
 }
 use crate::errors::*;
 
-extern crate libinspire;
-extern crate libads;
+use libinspire;
+use libads;
 
 /// Re-export slog
 ///
 /// Users of this library can, but don't have to use slog to build their own loggers
 #[macro_use]
 pub extern crate slog ;
-extern crate slog_stdlog;
+use slog_stdlog;
 
 use slog::DrainExt;
 
 #[macro_use]
 extern crate lazy_static;
-extern crate regex;
+
 use regex::Regex;
 
 use std::fs::File;
@@ -75,7 +75,7 @@ impl Inspirer {
         let mut input_file: File;
         let mut stdin = std::io::stdin();
 
-        let reader: &mut Read = match input_source {
+        let reader: &mut dyn Read = match input_source {
             Some(file_name) => {
                 info!(self.logger, "Reading from file";
                       "file_name" => file_name);
@@ -101,7 +101,7 @@ impl Inspirer {
         let mut stdout = std::io::stdout();
         let mut output_file: std::fs::File;
 
-        let writer: &mut Write = match output_dest {
+        let writer: &mut dyn Write = match output_dest {
             Some(file_name) => {
                 info!(self.logger, "Writing to file";
                       "file_name" => file_name);
