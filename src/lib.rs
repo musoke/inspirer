@@ -8,7 +8,7 @@ extern crate error_chain;
 // `error_chain!` creates.
 pub mod errors {
     // Create the Error, ErrorKind, ResultExt, and Result types
-    error_chain!{
+    error_chain! {
         foreign_links {
             Io(::std::io::Error) #[cfg(unix)];
         }
@@ -16,14 +16,14 @@ pub mod errors {
 }
 use crate::errors::*;
 
-use libinspire;
 use libads;
+use libinspire;
 
 /// Re-export slog
 ///
 /// Users of this library can, but don't have to use slog to build their own loggers
 #[macro_use]
-pub extern crate slog ;
+pub extern crate slog;
 use slog_stdlog;
 
 use slog::DrainExt;
@@ -34,8 +34,8 @@ extern crate lazy_static;
 use regex::Regex;
 
 use std::fs::File;
-use std::io::{Read, BufReader};
-use std::io::{Write, BufWriter};
+use std::io::{BufReader, Read};
+use std::io::{BufWriter, Write};
 
 pub struct Inspirer {
     logger: slog::Logger,
@@ -177,7 +177,6 @@ impl Inspirer {
     /// assert_eq!(inspirer.aux2key(input), vec!("Cutler:1992tc"));
     /// ```
     pub fn aux2key(&self, input_data: String) -> Vec<String> {
-
         lazy_static! {
             // TODO: check on the exact characters allowed in keys
             // Just find groups of keys which are cited together
@@ -197,9 +196,7 @@ impl Inspirer {
             .map(|c| c["key"].to_string())
             .collect::<Vec<String>>()
             .iter()
-            .flat_map(|s| {
-                INNER_REGEX.captures_iter(s).map(|c| c["key"].to_string())
-            })
+            .flat_map(|s| INNER_REGEX.captures_iter(s).map(|c| c["key"].to_string()))
             .collect();
 
         // Deduplicate keys
@@ -234,11 +231,11 @@ impl Inspirer {
     /// assert_eq!(inspirer.blg2key(input), vec!("2015CQGra..32g4001L"));
     /// ```
     pub fn blg2key(&self, input_data: String) -> Vec<String> {
-
         lazy_static! {
             static ref BLG_REGEX: Regex = Regex::new(
                 r#"(Warning--|WARN - )I didn't find a database entry for ["'](.+)["']"#,
-            ).expect("blg regex compiled during development");
+            )
+            .expect("blg regex compiled during development");
         }
 
         let mut matches: Vec<String> = BLG_REGEX

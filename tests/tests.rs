@@ -1,12 +1,10 @@
 use std::env;
-use std::process::{Command, Stdio};
-use std::path::{Path, PathBuf};
-use std::io::{Read, Write};
 use std::fs::{copy, File};
-
+use std::io::{Read, Write};
+use std::path::{Path, PathBuf};
+use std::process::{Command, Stdio};
 
 use nom_bibtex::Bibtex;
-
 
 use tempdir::TempDir;
 
@@ -111,11 +109,14 @@ fn check_output_aux_biblatex(bibtex: &Bibtex<'_>) {
 
     assert_eq!(bib[0].entry_type(), "ARTICLE");
     assert_eq!(bib[0].citation_key(), "1982PhRvL..48.1220A");
-    assert_eq!(bib[0].tags()[1], (
-        "title".into(),
-        "{Cosmology for grand unified theories with radiatively induced symmetry breaking}"
-            .into(),
-    ));
+    assert_eq!(
+        bib[0].tags()[1],
+        (
+            "title".into(),
+            "{Cosmology for grand unified theories with radiatively induced symmetry breaking}"
+                .into(),
+        )
+    );
     assert_eq!(bib[0].tags()[4], ("year".into(), "1982".into()));
 }
 
@@ -166,11 +167,14 @@ fn check_output_blg_biblatex(bibtex: &Bibtex<'_>) {
 
     assert_eq!(bib[0].entry_type(), "ARTICLE");
     assert_eq!(bib[0].citation_key(), "1982PhRvL..48.1220A");
-    assert_eq!(bib[0].tags()[1], (
-        "title".into(),
-        "{Cosmology for grand unified theories with radiatively induced symmetry breaking}"
-            .into(),
-    ));
+    assert_eq!(
+        bib[0].tags()[1],
+        (
+            "title".into(),
+            "{Cosmology for grand unified theories with radiatively induced symmetry breaking}"
+                .into(),
+        )
+    );
     assert_eq!(bib[0].tags()[4], ("year".into(), "1982".into()));
 }
 
@@ -289,7 +293,8 @@ fn aux2bib_stdin_stdout_biblatex() {
     let bibtex_raw = &[
         text::MONTH_STRINGS,
         std::str::from_utf8(&output.stdout).unwrap(),
-    ].join("\n");
+    ]
+    .join("\n");
     let bibtex = Bibtex::parse(bibtex_raw).expect("Valid bibtex file content");
 
     check_output_aux_biblatex(&bibtex);
@@ -342,7 +347,8 @@ fn blg2bib_stdin_stdout_biblatex() {
     let bibtex_raw = &[
         text::MONTH_STRINGS,
         std::str::from_utf8(&output.stdout).unwrap(),
-    ].join("\n");
+    ]
+    .join("\n");
     let bibtex = Bibtex::parse(bibtex_raw).expect("Valid bibtex file content");
 
     check_output_blg_biblatex(&bibtex);
@@ -357,7 +363,8 @@ fn aux2bib_file_stdout_bibtex() {
     copy(
         Path::new("example_files").join(filename_in),
         tmp_dir.path().join(filename_in),
-    ).expect("Failed to copy test input");
+    )
+    .expect("Failed to copy test input");
 
     let child = cmd_aux2bib()
         .current_dir(tmp_dir.path())
@@ -410,7 +417,8 @@ fn aux2bib_file_file_bibtex() {
     copy(
         Path::new("example_files").join(filename_in),
         tmp_dir.path().join(filename_in),
-    ).expect("Failed to copy test input");
+    )
+    .expect("Failed to copy test input");
 
     let child = cmd_aux2bib()
         .current_dir(tmp_dir.path())
