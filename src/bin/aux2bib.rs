@@ -8,8 +8,8 @@ use human_panic::setup_panic;
 
 #[macro_use]
 extern crate slog;
-use slog_term;
 use slog::DrainExt;
+use slog_term;
 
 use clap::{App, Arg};
 
@@ -21,7 +21,6 @@ fn main() {
     let root_logger = slog::Logger::root(drain, o!("version" => crate_version!()));
 
     if let Err(ref e) = run(&root_logger) {
-
         match e {
             _ => error!(root_logger, "File not found"; "error" => e.description()),
         }
