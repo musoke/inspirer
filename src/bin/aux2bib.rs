@@ -1,15 +1,14 @@
 #[macro_use(crate_version, crate_authors)]
 extern crate clap;
-extern crate inspirer;
+use inspirer;
 
 use inspirer::errors::*;
 
-extern crate human_panic;
 use human_panic::setup_panic;
 
 #[macro_use]
 extern crate slog;
-extern crate slog_term;
+use slog_term;
 use slog::DrainExt;
 
 use clap::{App, Arg};

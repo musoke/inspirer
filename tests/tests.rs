@@ -4,10 +4,10 @@ use std::path::{Path, PathBuf};
 use std::io::{Read, Write};
 use std::fs::{copy, File};
 
-extern crate nom_bibtex;
+
 use nom_bibtex::Bibtex;
 
-extern crate tempdir;
+
 use tempdir::TempDir;
 
 mod text;
@@ -64,7 +64,7 @@ fn cmd_blg2bib() -> Command {
     cmd
 }
 
-fn check_output_aux_bibtex(bibtex: &Bibtex) {
+fn check_output_aux_bibtex(bibtex: &Bibtex<'_>) {
     let bib = bibtex.bibliographies();
     assert_eq!(2, bib.len());
 
@@ -94,7 +94,7 @@ fn check_output_aux_bibtex(bibtex: &Bibtex) {
     assert_eq!(bib[1].tags()[4], ("year".into(), "2015".into()));
 }
 
-fn check_output_aux_biblatex(bibtex: &Bibtex) {
+fn check_output_aux_biblatex(bibtex: &Bibtex<'_>) {
     let bib = bibtex.bibliographies();
     assert_eq!(4, bib.len());
 
@@ -119,7 +119,7 @@ fn check_output_aux_biblatex(bibtex: &Bibtex) {
     assert_eq!(bib[0].tags()[4], ("year".into(), "1982".into()));
 }
 
-fn check_output_blg_bibtex(bibtex: &Bibtex) {
+fn check_output_blg_bibtex(bibtex: &Bibtex<'_>) {
     let bib = bibtex.bibliographies();
     assert_eq!(2, bib.len());
 
@@ -149,7 +149,7 @@ fn check_output_blg_bibtex(bibtex: &Bibtex) {
     assert_eq!(bib[1].tags()[4], ("year".into(), "2015".into()));
 }
 
-fn check_output_blg_biblatex(bibtex: &Bibtex) {
+fn check_output_blg_biblatex(bibtex: &Bibtex<'_>) {
     let bib = bibtex.bibliographies();
     assert_eq!(4, bib.len());
 
