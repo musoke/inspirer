@@ -34,6 +34,7 @@ branch = "master"
 repository = "musoke/inspirer"
 
 [dependencies]
+assert_cmd = "0.11.1"
 clap = "2.20.0"
 error-chain = "0.10.0"
 human-panic = "1.0.1"

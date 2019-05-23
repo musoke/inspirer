@@ -1,9 +1,9 @@
-use std::env;
 use std::fs::{copy, File};
 use std::io::{Read, Write};
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::process::{Command, Stdio};
 
+use assert_cmd::prelude::*;
 use nom_bibtex::Bibtex;
 
 use tempdir::TempDir;
@@ -18,26 +18,8 @@ fn read_file(filename: &str) -> Vec<u8> {
     content
 }
 
-fn get_bin_dir() -> PathBuf {
-    env::current_exe()
-        .expect("test bin's directory")
-        .parent()
-        .expect("test bin's parent directory")
-        .parent()
-        .expect("executable's directory")
-        .to_path_buf()
-}
-
 fn cmd_aux2bib() -> Command {
-    let path = if cfg!(not(windows)) {
-        get_bin_dir().join("aux2bib")
-    } else {
-        get_bin_dir().join("aux2bib.exe")
-    };
-    if !path.is_file() {
-        panic!("aux2bib binary {:?} was not found", path);
-    }
-    let mut cmd = Command::new(path);
+    let mut cmd = Command::cargo_bin("aux2bib").unwrap();
     cmd.env_clear()
         .stderr(Stdio::piped())
         .stdout(Stdio::piped());
@@ -46,15 +28,7 @@ fn cmd_aux2bib() -> Command {
 }
 
 fn cmd_blg2bib() -> Command {
-    let path = if cfg!(not(windows)) {
-        get_bin_dir().join("blg2bib")
-    } else {
-        get_bin_dir().join("blg2bib.exe")
-    };
-    if !path.is_file() {
-        panic!("blg2bib binary {:?} was not found", path);
-    }
-    let mut cmd = Command::new(path);
+    let mut cmd = Command::cargo_bin("blg2bib").unwrap();
     cmd.env_clear()
         .stderr(Stdio::piped())
         .stdout(Stdio::piped());
@@ -223,7 +197,7 @@ fn aux2bib_stdin_stdout_empty() {
 
     println!("{:?}", output);
     assert!(output.status.success());
-    assert_eq!(output.stdout, []);
+    assert_eq!(output.stdout.len(), 0);
 }
 
 #[cfg(not(windows))]
@@ -243,7 +217,7 @@ fn blg2bib_stdin_stdout_empty() {
 
     println!("{:?}", output);
     assert!(output.status.success());
-    assert_eq!(output.stdout, []);
+    assert_eq!(output.stdout.len(), 0);
 }
 
 #[cfg(not(windows))]
@@ -404,7 +378,7 @@ fn aux2bib_file_stdout_bibtex_input_no_exist() {
     println!("{:?}", output);
     assert_eq!(output.status.code().expect("Process exited"), 1);
     // Check that there is nothing written to stdout
-    assert_eq!(output.stdout, []);
+    assert_eq!(output.stdout.len(), 0);
 }
 
 #[cfg(not(windows))]
@@ -432,7 +406,7 @@ fn aux2bib_file_file_bibtex() {
     println!("{:?}", output);
     assert!(output.status.success());
     // Check that there is nothing written to stdout
-    assert_eq!(output.stdout, []);
+    assert_eq!(output.stdout.len(), 0);
 
     let mut output = Vec::new();
     let mut output_file =
