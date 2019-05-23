@@ -1,11 +1,13 @@
 use std::env;
-use std::fs::{copy, File};
-use std::io::{Read, Write};
-use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
+use std::path::{Path, PathBuf};
+use std::io::{Read, Write};
+use std::fs::{copy, File};
 
+extern crate nom_bibtex;
 use nom_bibtex::Bibtex;
 
+extern crate tempdir;
 use tempdir::TempDir;
 
 mod text;
@@ -62,7 +64,7 @@ fn cmd_blg2bib() -> Command {
     cmd
 }
 
-fn check_output_aux_bibtex(bibtex: &Bibtex<'_>) {
+fn check_output_aux_bibtex(bibtex: &Bibtex) {
     let bib = bibtex.bibliographies();
     assert_eq!(2, bib.len());
 
@@ -92,7 +94,7 @@ fn check_output_aux_bibtex(bibtex: &Bibtex<'_>) {
     assert_eq!(bib[1].tags()[4], ("year".into(), "2015".into()));
 }
 
-fn check_output_aux_biblatex(bibtex: &Bibtex<'_>) {
+fn check_output_aux_biblatex(bibtex: &Bibtex) {
     let bib = bibtex.bibliographies();
     assert_eq!(4, bib.len());
 
@@ -109,17 +111,15 @@ fn check_output_aux_biblatex(bibtex: &Bibtex<'_>) {
 
     assert_eq!(bib[0].entry_type(), "ARTICLE");
     assert_eq!(bib[0].citation_key(), "1982PhRvL..48.1220A");
-    assert_eq!(
-        bib[0].tags()[1],
-        (
-            "title".into(),
-            "{Cosmology for grand unified theories with radiatively induced symmetry breaking}"
-                .into(),
-        )
-    );
+    assert_eq!(bib[0].tags()[1], (
+        "title".into(),
+        "{Cosmology for grand unified theories with radiatively induced symmetry breaking}"
+            .into(),
+    ));
     assert_eq!(bib[0].tags()[4], ("year".into(), "1982".into()));
 }
 
+fn check_output_blg_bibtex(bibtex: &Bibtex) {
 fn check_output_blg_bibtex(bibtex: &Bibtex<'_>) {
     let bib = bibtex.bibliographies();
     assert_eq!(2, bib.len());
@@ -360,13 +360,6 @@ fn aux2bib_file_stdout_bibtex() {
     let filename_in = "test_bibtex.aux";
 
     let tmp_dir = TempDir::new("inspirer_test").expect("Failed to create tmp_dir");
-    copy(
-        Path::new("example_files").join(filename_in),
-        tmp_dir.path().join(filename_in),
-    )
-    .expect("Failed to copy test input");
-
-    let child = cmd_aux2bib()
         .current_dir(tmp_dir.path())
         .arg(filename_in)
         .stdin(Stdio::piped())
@@ -417,8 +410,7 @@ fn aux2bib_file_file_bibtex() {
     copy(
         Path::new("example_files").join(filename_in),
         tmp_dir.path().join(filename_in),
-    )
-    .expect("Failed to copy test input");
+    ).expect("Failed to copy test input");
 
     let child = cmd_aux2bib()
         .current_dir(tmp_dir.path())
