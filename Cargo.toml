@@ -1,17 +1,24 @@
 [package]
 authors = ["Nathan Musoke <nathan.musoke@gmail.com>"]
-categories = ["command-line-utilities", "science"]
+categories = [
+    "command-line-utilities",
+    "science",
+]
 description = "For working with LaTeX, inspirehep.net, and BibTeX/BibLaTeX"
-keywords = ["latex", "bibtex", "physics", "inspire", "inspirehep"]
+edition = "2018"
+keywords = [
+    "latex",
+    "bibtex",
+    "physics",
+    "inspire",
+    "inspirehep",
+]
 license = "Apache-2.0"
 name = "inspirer"
 publish = true
 readme = "README.md"
 repository = "https://gitlab.com/musoke/inspirer"
 version = "0.1.1"
-edition = "2018"
-
-[badges]
 
 [badges.appveyor]
 branch = "master"
@@ -49,8 +56,5 @@ version = "0.1.0-beta-no-https"
 [dev-dependencies]
 nom-bibtex = "0.2.0"
 tempdir = "0.3.5"
-
-[profile]
-
 [profile.release]
 lto = true
