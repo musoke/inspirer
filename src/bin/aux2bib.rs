@@ -4,6 +4,9 @@ extern crate inspirer;
 
 use inspirer::errors::*;
 
+extern crate human_panic;
+use human_panic::setup_panic;
+
 #[macro_use]
 extern crate slog;
 extern crate slog_term;
@@ -12,6 +15,8 @@ use slog::DrainExt;
 use clap::{App, Arg};
 
 fn main() {
+    setup_panic!();
+
     // Initialize logging
     let drain = slog_term::streamer().stderr().build().fuse();
     let root_logger = slog::Logger::root(drain, o!("version" => crate_version!()));
