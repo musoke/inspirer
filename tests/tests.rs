@@ -1,7 +1,7 @@
 use std::fs::{copy, File};
-use std::io::{Read, Write};
+use std::io::Read;
 use std::path::Path;
-use std::process::{Command, Stdio};
+use std::process::Command;
 
 use assert_cmd::prelude::*;
 use nom_bibtex::Bibtex;
@@ -9,32 +9,6 @@ use nom_bibtex::Bibtex;
 use tempdir::TempDir;
 
 mod text;
-
-fn read_file(filename: &str) -> Vec<u8> {
-    let mut file = File::open(filename).unwrap();
-    let mut content = Vec::new();
-    file.read_to_end(&mut content).unwrap();
-
-    content
-}
-
-fn cmd_aux2bib() -> Command {
-    let mut cmd = Command::cargo_bin("aux2bib").unwrap();
-    cmd.env_clear()
-        .stderr(Stdio::piped())
-        .stdout(Stdio::piped());
-
-    cmd
-}
-
-fn cmd_blg2bib() -> Command {
-    let mut cmd = Command::cargo_bin("blg2bib").unwrap();
-    cmd.env_clear()
-        .stderr(Stdio::piped())
-        .stdout(Stdio::piped());
-
-    cmd
-}
 
 fn check_output_aux_bibtex(bibtex: &Bibtex<'_>) {
     let bib = bibtex.bibliographies();
@@ -155,91 +129,51 @@ fn check_output_blg_biblatex(bibtex: &Bibtex<'_>) {
 #[cfg(not(windows))]
 #[test]
 fn aux2bib_runs() {
-    let child = cmd_aux2bib()
-        .arg("--help")
-        .spawn()
-        .expect("Failed to execute aux2bib");
-
-    let output = child.wait_with_output().expect("Failed to wait on aux2bib");
-
-    println!("{:?}", output);
-    assert!(output.status.success());
+    let mut cmd = Command::cargo_bin("aux2bib").unwrap();
+    cmd.arg("--help");
+    cmd.assert().success();
 }
 
 #[cfg(not(windows))]
 #[test]
 fn blg2bib_runs() {
-    let child = cmd_blg2bib()
-        .arg("--help")
-        .spawn()
-        .expect("Failed to execute blg2bib");
-
-    let output = child.wait_with_output().expect("Failed to wait on aux2bib");
-
-    println!("{:?}", output);
-    assert!(output.status.success());
+    let mut cmd = Command::cargo_bin("blg2bib").unwrap();
+    cmd.arg("--help");
+    cmd.assert().success();
 }
 
 #[cfg(not(windows))]
 #[test]
 fn aux2bib_stdin_stdout_empty() {
-    let mut child = cmd_aux2bib()
-        .stdin(Stdio::piped())
-        .spawn()
-        .expect("Failed to execute aux2bib");
+    let mut cmd = Command::cargo_bin("aux2bib").unwrap();
+    cmd.with_stdin().buffer("");
 
-    {
-        let stdin = child.stdin.as_mut().expect("Failed to get stdin");
-        stdin.write_all(b"").expect("Failed to write to stdin");
-    }
-
-    let output = child.wait_with_output().expect("Failed to wait on aux2bib");
-
-    println!("{:?}", output);
-    assert!(output.status.success());
-    assert_eq!(output.stdout.len(), 0);
+    cmd.assert().success().stdout("");
 }
 
 #[cfg(not(windows))]
 #[test]
 fn blg2bib_stdin_stdout_empty() {
-    let mut child = cmd_blg2bib()
-        .stdin(Stdio::piped())
-        .spawn()
-        .expect("Failed to execute blg2bib");
+    let mut cmd = Command::cargo_bin("blg2bib").unwrap();
+    cmd.with_stdin().buffer("");
 
-    {
-        let stdin = child.stdin.as_mut().expect("Failed to get stdin");
-        stdin.write_all(b"").expect("Failed to write to stdin");
-    }
-
-    let output = child.wait_with_output().expect("Failed to wait on aux2bib");
-
-    println!("{:?}", output);
-    assert!(output.status.success());
-    assert_eq!(output.stdout.len(), 0);
+    cmd.assert().success().stdout("");
 }
 
 #[cfg(not(windows))]
 #[test]
 fn aux2bib_stdin_stdout_bibtex() {
-    let mut child = cmd_aux2bib()
-        .stdin(Stdio::piped())
-        .spawn()
-        .expect("Failed to execute aux2bib");
+    let mut cmd = Command::cargo_bin("aux2bib").unwrap();
+    let path = Path::new("example_files").join("test_bibtex.aux");
 
-    {
-        let input = read_file("example_files/test_bibtex.aux");
-        let stdin = child.stdin.as_mut().expect("Failed to get stdin");
-        stdin.write_all(&input).expect("Failed to write to stdin");
-    }
+    let assert = cmd
+        .with_stdin()
+        .path(path)
+        .expect("example input file exists")
+        .assert()
+        .success();
 
-    let output = child.wait_with_output().expect("Failed to wait on aux2bib");
-
-    println!("{:?}", output);
-    assert!(output.status.success());
-
-    let bibtex = Bibtex::parse(std::str::from_utf8(&output.stdout).unwrap())
+    let bibtex = Bibtex::parse(std::str::from_utf8(&assert.get_output().stdout).unwrap())
         .expect("Valid bibtex file content");
 
     check_output_aux_bibtex(&bibtex);
@@ -248,25 +182,19 @@ fn aux2bib_stdin_stdout_bibtex() {
 #[cfg(not(windows))]
 #[test]
 fn aux2bib_stdin_stdout_biblatex() {
-    let mut child = cmd_aux2bib()
-        .stdin(Stdio::piped())
-        .spawn()
-        .expect("Failed to execute aux2bib");
+    let mut cmd = Command::cargo_bin("aux2bib").unwrap();
+    let path = Path::new("example_files").join("test_biber.aux");
 
-    {
-        let input = read_file("example_files/test_biber.aux");
-        let stdin = child.stdin.as_mut().expect("Failed to get stdin");
-        stdin.write_all(&input).expect("Failed to write to stdin");
-    }
-
-    let output = child.wait_with_output().expect("Failed to wait on aux2bib");
-
-    println!("{:?}", output);
-    assert!(output.status.success());
+    let assert = cmd
+        .with_stdin()
+        .path(path)
+        .expect("example input file exists")
+        .assert()
+        .success();
 
     let bibtex_raw = &[
         text::MONTH_STRINGS,
-        std::str::from_utf8(&output.stdout).unwrap(),
+        std::str::from_utf8(&assert.get_output().stdout).unwrap(),
     ]
     .join("\n");
     let bibtex = Bibtex::parse(bibtex_raw).expect("Valid bibtex file content");
@@ -277,23 +205,17 @@ fn aux2bib_stdin_stdout_biblatex() {
 #[cfg(not(windows))]
 #[test]
 fn blg2bib_stdin_stdout_bibtex() {
-    let mut child = cmd_blg2bib()
-        .stdin(Stdio::piped())
-        .spawn()
-        .expect("Failed to execute aux2bib");
+    let mut cmd = Command::cargo_bin("blg2bib").unwrap();
+    let path = Path::new("example_files").join("test_bibtex.blg");
 
-    {
-        let input = read_file("example_files/test_bibtex.blg");
-        let stdin = child.stdin.as_mut().expect("Failed to get stdin");
-        stdin.write_all(&input).expect("Failed to write to stdin");
-    }
+    let assert = cmd
+        .with_stdin()
+        .path(path)
+        .expect("example input file exists")
+        .assert()
+        .success();
 
-    let output = child.wait_with_output().expect("Failed to wait on aux2bib");
-
-    println!("{:?}", output);
-    assert!(output.status.success());
-
-    let bibtex = Bibtex::parse(std::str::from_utf8(&output.stdout).unwrap())
+    let bibtex = Bibtex::parse(std::str::from_utf8(&assert.get_output().stdout).unwrap())
         .expect("Valid bibtex file content");
 
     check_output_blg_bibtex(&bibtex);
@@ -302,25 +224,19 @@ fn blg2bib_stdin_stdout_bibtex() {
 #[cfg(not(windows))]
 #[test]
 fn blg2bib_stdin_stdout_biblatex() {
-    let mut child = cmd_blg2bib()
-        .stdin(Stdio::piped())
-        .spawn()
-        .expect("Failed to execute blg2bib");
+    let mut cmd = Command::cargo_bin("blg2bib").unwrap();
+    let path = Path::new("example_files").join("test_biber.blg");
 
-    {
-        let input = read_file("example_files/test_biber.blg");
-        let stdin = child.stdin.as_mut().expect("Failed to get stdin");
-        stdin.write_all(&input).expect("Failed to write to stdin");
-    }
-
-    let output = child.wait_with_output().expect("Failed to wait on aux2bib");
-
-    println!("{:?}", output);
-    assert!(output.status.success());
+    let assert = cmd
+        .with_stdin()
+        .path(path)
+        .expect("example input file exists")
+        .assert()
+        .success();
 
     let bibtex_raw = &[
         text::MONTH_STRINGS,
-        std::str::from_utf8(&output.stdout).unwrap(),
+        std::str::from_utf8(&assert.get_output().stdout).unwrap(),
     ]
     .join("\n");
     let bibtex = Bibtex::parse(bibtex_raw).expect("Valid bibtex file content");
@@ -340,19 +256,12 @@ fn aux2bib_file_stdout_bibtex() {
     )
     .expect("Failed to copy test input");
 
-    let child = cmd_aux2bib()
-        .current_dir(tmp_dir.path())
-        .arg(filename_in)
-        .stdin(Stdio::piped())
-        .spawn()
-        .expect("Failed to execute aux2bib");
+    let mut cmd = Command::cargo_bin("aux2bib").unwrap();
+    cmd.current_dir(tmp_dir.path()).arg(filename_in);
 
-    let output = child.wait_with_output().expect("Failed to wait on aux2bib");
+    let assert = cmd.assert().success();
 
-    println!("{:?}", output);
-    assert!(output.status.success());
-
-    let bibtex = Bibtex::parse(std::str::from_utf8(&output.stdout).unwrap())
+    let bibtex = Bibtex::parse(std::str::from_utf8(&assert.get_output().stdout).unwrap())
         .expect("Valid bibtex file content");
 
     check_output_aux_bibtex(&bibtex);
@@ -360,29 +269,21 @@ fn aux2bib_file_stdout_bibtex() {
 
 #[cfg(not(windows))]
 #[test]
-// Test for panic when the input file does not exist
+/// Test for panic when the input file does not exist
 fn aux2bib_file_stdout_bibtex_input_no_exist() {
     let filename_in = "test_bibtex.aux";
 
     let tmp_dir = TempDir::new("inspirer_test").expect("Failed to create tmp_dir");
 
-    let child = cmd_aux2bib()
-        .current_dir(tmp_dir.path())
-        .arg(filename_in)
-        .stdin(Stdio::piped())
-        .spawn()
-        .expect("Failed to execute aux2bib");
+    let mut cmd = Command::cargo_bin("aux2bib").unwrap();
+    cmd.current_dir(tmp_dir.path()).arg(filename_in);
 
-    let output = child.wait_with_output().expect("Failed to wait on aux2bib");
-
-    println!("{:?}", output);
-    assert_eq!(output.status.code().expect("Process exited"), 1);
-    // Check that there is nothing written to stdout
-    assert_eq!(output.stdout.len(), 0);
+    cmd.assert().failure().code(1).stdout("");
 }
 
 #[cfg(not(windows))]
 #[test]
+/// Test reading from file and outputting to another file
 fn aux2bib_file_file_bibtex() {
     let filename_in = "test_bibtex.aux";
     let filename_out = "autobib.bib";
@@ -394,29 +295,21 @@ fn aux2bib_file_file_bibtex() {
     )
     .expect("Failed to copy test input");
 
-    let child = cmd_aux2bib()
-        .current_dir(tmp_dir.path())
+    let mut cmd = Command::cargo_bin("aux2bib").unwrap();
+    cmd.current_dir(tmp_dir.path())
         .arg(filename_in)
-        .arg(filename_out)
-        .stdin(Stdio::piped())
-        .spawn()
-        .expect("Failed to execute aux2bib");
+        .arg(filename_out);
 
-    let output = child.wait_with_output().expect("Failed to wait on aux2bib");
-    println!("{:?}", output);
-    assert!(output.status.success());
-    // Check that there is nothing written to stdout
-    assert_eq!(output.stdout.len(), 0);
+    cmd.assert().success().stdout("");
 
-    let mut output = Vec::new();
+    let mut output_string = String::new();
     let mut output_file =
         File::open(tmp_dir.path().join(filename_out)).expect("Output file not written");
     output_file
-        .read_to_end(&mut output)
+        .read_to_string(&mut output_string)
         .expect("Failed to read output file");
 
-    let bibtex =
-        Bibtex::parse(std::str::from_utf8(&output).unwrap()).expect("Valid bibtex file content");
+    let bibtex = Bibtex::parse(&output_string).expect("Valid bibtex file content");
 
     check_output_aux_bibtex(&bibtex);
 }
