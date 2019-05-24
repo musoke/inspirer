@@ -34,7 +34,6 @@ branch = "master"
 repository = "musoke/inspirer"
 
 [dependencies]
-assert_cmd = "0.11.1"
 clap = "2.20.0"
 error-chain = "0.10.0"
 human-panic = "1.0.1"
@@ -55,6 +54,7 @@ version = "0.1.0-beta"
 version = "0.1.0-beta-no-https"
 
 [dev-dependencies]
+assert_cmd = "0.11.1"
 nom-bibtex = "0.2.0"
 tempdir = "0.3.5"
 [profile.release]
