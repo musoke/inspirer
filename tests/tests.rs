@@ -126,7 +126,6 @@ fn check_output_blg_biblatex(bibtex: &Bibtex<'_>) {
     assert_eq!(bib[0].tags()[4], ("year".into(), "1982".into()));
 }
 
-#[cfg(not(windows))]
 #[test]
 fn aux2bib_runs() {
     let mut cmd = Command::cargo_bin("aux2bib").unwrap();
@@ -134,7 +133,6 @@ fn aux2bib_runs() {
     cmd.assert().success();
 }
 
-#[cfg(not(windows))]
 #[test]
 fn blg2bib_runs() {
     let mut cmd = Command::cargo_bin("blg2bib").unwrap();
@@ -142,7 +140,6 @@ fn blg2bib_runs() {
     cmd.assert().success();
 }
 
-#[cfg(not(windows))]
 #[test]
 fn aux2bib_stdin_stdout_empty() {
     let mut cmd = Command::cargo_bin("aux2bib").unwrap();
@@ -151,7 +148,6 @@ fn aux2bib_stdin_stdout_empty() {
     cmd.assert().success().stdout("");
 }
 
-#[cfg(not(windows))]
 #[test]
 fn blg2bib_stdin_stdout_empty() {
     let mut cmd = Command::cargo_bin("blg2bib").unwrap();
@@ -160,7 +156,6 @@ fn blg2bib_stdin_stdout_empty() {
     cmd.assert().success().stdout("");
 }
 
-#[cfg(not(windows))]
 #[test]
 fn aux2bib_stdin_stdout_bibtex() {
     let mut cmd = Command::cargo_bin("aux2bib").unwrap();
@@ -179,7 +174,6 @@ fn aux2bib_stdin_stdout_bibtex() {
     check_output_aux_bibtex(&bibtex);
 }
 
-#[cfg(not(windows))]
 #[test]
 fn aux2bib_stdin_stdout_biblatex() {
     let mut cmd = Command::cargo_bin("aux2bib").unwrap();
@@ -202,7 +196,6 @@ fn aux2bib_stdin_stdout_biblatex() {
     check_output_aux_biblatex(&bibtex);
 }
 
-#[cfg(not(windows))]
 #[test]
 fn blg2bib_stdin_stdout_bibtex() {
     let mut cmd = Command::cargo_bin("blg2bib").unwrap();
@@ -221,7 +214,6 @@ fn blg2bib_stdin_stdout_bibtex() {
     check_output_blg_bibtex(&bibtex);
 }
 
-#[cfg(not(windows))]
 #[test]
 fn blg2bib_stdin_stdout_biblatex() {
     let mut cmd = Command::cargo_bin("blg2bib").unwrap();
@@ -244,7 +236,6 @@ fn blg2bib_stdin_stdout_biblatex() {
     check_output_blg_biblatex(&bibtex);
 }
 
-#[cfg(not(windows))]
 #[test]
 fn aux2bib_file_stdout_bibtex() {
     let filename_in = "test_bibtex.aux";
@@ -267,7 +258,6 @@ fn aux2bib_file_stdout_bibtex() {
     check_output_aux_bibtex(&bibtex);
 }
 
-#[cfg(not(windows))]
 #[test]
 /// Test for panic when the input file does not exist
 fn aux2bib_file_stdout_bibtex_input_no_exist() {
@@ -281,7 +271,6 @@ fn aux2bib_file_stdout_bibtex_input_no_exist() {
     cmd.assert().failure().code(1).stdout("");
 }
 
-#[cfg(not(windows))]
 #[test]
 /// Test reading from file and outputting to another file
 fn aux2bib_file_file_bibtex() {
