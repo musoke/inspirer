@@ -55,7 +55,7 @@ version = "0.1.0-beta-no-https"
 
 [dev-dependencies]
 assert_cmd = "0.11.1"
+assert_fs = "0.11.3"
 nom-bibtex = "0.2.0"
-tempdir = "0.3.5"
 [profile.release]
 lto = true

@@ -4,9 +4,8 @@ use std::path::Path;
 use std::process::Command;
 
 use assert_cmd::prelude::*;
+use assert_fs::prelude::*;
 use nom_bibtex::Bibtex;
-
-use tempdir::TempDir;
 
 mod text;
 
@@ -240,12 +239,10 @@ fn blg2bib_stdin_stdout_biblatex() {
 fn aux2bib_file_stdout_bibtex() {
     let filename_in = "test_bibtex.aux";
 
-    let tmp_dir = TempDir::new("inspirer_test").expect("Failed to create tmp_dir");
-    copy(
-        Path::new("example_files").join(filename_in),
-        tmp_dir.path().join(filename_in),
-    )
-    .expect("Failed to copy test input");
+    let tmp_dir = assert_fs::TempDir::new().expect("can create tmp_dir");
+    tmp_dir
+        .copy_from(Path::new("example_files"), &[filename_in])
+        .expect("can copy test input");
 
     let mut cmd = Command::cargo_bin("aux2bib").unwrap();
     cmd.current_dir(tmp_dir.path()).arg(filename_in);
@@ -263,7 +260,7 @@ fn aux2bib_file_stdout_bibtex() {
 fn aux2bib_file_stdout_bibtex_input_no_exist() {
     let filename_in = "test_bibtex.aux";
 
-    let tmp_dir = TempDir::new("inspirer_test").expect("Failed to create tmp_dir");
+    let tmp_dir = assert_fs::TempDir::new().expect("can create tmp_dir");
 
     let mut cmd = Command::cargo_bin("aux2bib").unwrap();
     cmd.current_dir(tmp_dir.path()).arg(filename_in);
@@ -277,12 +274,10 @@ fn aux2bib_file_file_bibtex() {
     let filename_in = "test_bibtex.aux";
     let filename_out = "autobib.bib";
 
-    let tmp_dir = TempDir::new("inspirer_test").expect("Failed to create tmp_dir");
-    copy(
-        Path::new("example_files").join(filename_in),
-        tmp_dir.path().join(filename_in),
-    )
-    .expect("Failed to copy test input");
+    let tmp_dir = assert_fs::TempDir::new().expect("can create tmp_dir");
+    tmp_dir
+        .copy_from(Path::new("example_files"), &[filename_in])
+        .expect("can copy test input");
 
     let mut cmd = Command::cargo_bin("aux2bib").unwrap();
     cmd.current_dir(tmp_dir.path())
