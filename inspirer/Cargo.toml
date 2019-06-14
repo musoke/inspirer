@@ -1,0 +1,59 @@
+[package]
+authors = ["Nathan Musoke <nathan.musoke@gmail.com>"]
+categories = [
+    "command-line-utilities",
+    "science",
+]
+description = "For working with LaTeX, inspirehep.net, and BibTeX/BibLaTeX"
+edition = "2018"
+keywords = [
+    "latex",
+    "bibtex",
+    "physics",
+    "inspire",
+    "inspirehep",
+]
+license = "Apache-2.0"
+name = "inspirer"
+publish = true
+readme = "README.md"
+repository = "https://gitlab.com/musoke/inspirer"
+version = "0.1.1"
+
+[badges.appveyor]
+branch = "master"
+repository = "musoke/inspirer"
+service = "github"
+
+[badges.gitlab]
+branch = "master"
+repository = "musoke/inspirer"
+
+[badges.travis-ci]
+branch = "master"
+repository = "musoke/inspirer"
+
+[dependencies]
+clap = "2.20.0"
+error-chain = "0.10.0"
+human-panic = "1.0.1"
+lazy_static = "0.2.8"
+regex = "0.2"
+select = "0.3.0"
+slog = "1.4.1"
+slog-stdlog = "1.1.0"
+slog-term = "1.4.0"
+
+[dependencies.libads]
+# git = "https://github.com/musoke/libads"
+version = "0.1.0-beta"
+
+[dependencies.libinspire]
+# git = "https://github.com/musoke/libinspire"
+# branch = "no-https"
+version = "0.1.0-beta"
+
+[dev-dependencies]
+assert_cmd = "0.11.1"
+assert_fs = "0.11.3"
+nom-bibtex = "0.2.0"
