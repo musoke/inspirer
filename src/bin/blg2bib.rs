@@ -2,7 +2,8 @@
 extern crate clap;
 use inspirer;
 
-use inspirer::errors::*;
+use inspirer::InspirerError;
+use std::error::Error;
 
 use human_panic::setup_panic;
 
@@ -22,13 +23,18 @@ fn main() {
 
     if let Err(ref e) = run(&root_logger) {
         match e {
-            _ => error!(root_logger, "File not found"; "error" => e.description()),
+            _ => error!(root_logger, e.to_string();
+                    "error" => format!("{}", match e.source(){
+                        Some(e) => e.to_string(),
+                        None => String::new(),
+                    })
+            ),
         }
         ::std::process::exit(1);
     }
 }
 
-fn run(root_logger: &slog::Logger) -> Result<()> {
+fn run(root_logger: &slog::Logger) -> Result<(), InspirerError> {
     info!(root_logger, "Application started");
 
     // Initialize instance of InspirerLib
