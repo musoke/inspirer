@@ -49,9 +49,7 @@ slog-term = "1.4.0"
 version = "0.1.0-beta"
 
 [dependencies.libinspire]
-# git = "https://github.com/musoke/libinspire"
-# branch = "no-https"
-version = "0.1.0-beta"
+path = "../libinspire"
 
 [dev-dependencies]
 assert_cmd = "0.11.1"
