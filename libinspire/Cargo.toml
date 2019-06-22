@@ -1,0 +1,32 @@
+[package]
+edition= "2018"
+authors = ["Nathan Musoke <nathan.musoke@gmail.com>"]
+description = "For interacting with API of inspirehep.net"
+name = "libinspire"
+repository = "https://gitlab.com/musoke/libinspire"
+publish = false
+version = "0.1.0-beta"
+license = "Apache-2.0"
+
+[badges]
+
+[badges.appveyor]
+branch = "master"
+repository = "musoke/libinspire"
+service = "github"
+
+[badges.gitlab]
+branch = "master"
+repository = "musoke/libinspire"
+
+[badges.travis-ci]
+branch = "master"
+repository = "musoke/libinspire"
+
+[dependencies]
+lazy_static = "0.2.8"
+regex = "0.2.2"
+reqwest = "0.9.8"
+select = "0.3.0"
+slog = "1.4.1"
+slog-stdlog = "1.1.0"
