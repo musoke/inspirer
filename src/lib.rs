@@ -1,20 +1,32 @@
-// `error_chain!` can recurse deeply
-#![recursion_limit = "1024"]
-#[macro_use]
-extern crate error_chain;
+use std::fmt;
 
-// We'll put our errors in an `errors` module, and other modules in
-// this crate will `use errors::*;` to get access to everything
-// `error_chain!` creates.
-pub mod errors {
-    // Create the Error, ErrorKind, ResultExt, and Result types
-    error_chain! {
-        foreign_links {
-            Io(::std::io::Error) #[cfg(unix)];
+/// Crate errors
+///
+/// We'll put our errors in an `InspirerError` enum
+#[derive(Debug)]
+pub enum InspirerError {
+    Io(::std::io::Error),
+    #[doc(hidden)]
+    __Nonexhaustive,
+}
+
+impl std::fmt::Display for InspirerError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            InspirerError::Io(_) => write!(f, "IO Error"),
+            InspirerError::__Nonexhaustive => unreachable!(),
         }
     }
 }
-use crate::errors::*;
+
+impl std::error::Error for InspirerError {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            InspirerError::Io(e) => Some(e),
+            _ => None,
+        }
+    }
+}
 
 use libads;
 use libinspire;
@@ -69,7 +81,7 @@ impl Inspirer {
     /// # Examples
     /// ```
     /// ```
-    pub fn get_input(&self, input_source: Option<&str>) -> Result<String> {
+    pub fn get_input(&self, input_source: Option<&str>) -> Result<String, InspirerError> {
         let mut input_data = String::new();
 
         let mut input_file: File;
@@ -79,8 +91,7 @@ impl Inspirer {
             Some(file_name) => {
                 info!(self.logger, "Reading from file";
                       "file_name" => file_name);
-                input_file = File::open(file_name)
-                    .chain_err(|| format!("File \"{}\" not found", file_name))?;
+                input_file = File::open(file_name).map_err(|e| InspirerError::Io(e))?;
                 &mut input_file
             }
             None => {
@@ -91,13 +102,17 @@ impl Inspirer {
         let mut reader = BufReader::new(reader);
         reader
             .read_to_string(&mut input_data)
-            .chain_err(|| "Could not read input")?;
+            .map_err(|e| InspirerError::Io(e))?;
 
         Ok(input_data)
     }
 
     /// Write output to file or stdout
-    pub fn put_output(&self, output_dest: Option<&str>, output: Vec<String>) -> Result<()> {
+    pub fn put_output(
+        &self,
+        output_dest: Option<&str>,
+        output: Vec<String>,
+    ) -> Result<(), InspirerError> {
         let mut stdout = std::io::stdout();
         let mut output_file: std::fs::File;
 
@@ -109,7 +124,7 @@ impl Inspirer {
                     .append(true)
                     .create(true)
                     .open(file_name)
-                    .chain_err(|| format!("Could not open file \"{}\" to write", file_name))?;
+                    .map_err(|e| InspirerError::Io(e))?;
                 &mut output_file
             }
             None => {
@@ -124,10 +139,10 @@ impl Inspirer {
         for o in output {
             writer
                 .write_all(o.as_bytes())
-                .chain_err(|| "Failed to write output")?;
+                .map_err(|e| InspirerError::Io(e))?;
         }
 
-        writer.flush().chain_err(|| "Failed to write output")?;
+        writer.flush().map_err(|e| InspirerError::Io(e))?;
 
         Ok(())
     }
