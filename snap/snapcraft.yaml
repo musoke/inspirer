@@ -6,6 +6,7 @@ description: |
   https://crates.io/crates/inspirer
 
 grade: devel # must be 'stable' to release into candidate/stable channels
+base: core18
 confinement: strict # use 'strict' once you have the right plugs and slots
 
 apps:
